@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import type { ProjectType } from '~/mocks/dashboard'
 
-const props = defineProps<{
-  type: ProjectType
-}>()
+const props = withDefaults(
+  defineProps<{
+    type: ProjectType
+    size?: 'default' | 'compact'
+  }>(),
+  { size: 'default' },
+)
 
 const label = computed(() => {
   if (props.type === 'sm') return 'СМ'
@@ -25,7 +29,10 @@ const colorVar = computed(() => {
 <template>
   <span
     class="project-badge"
-    :class="{ 'project-badge--sm': type === 'sm' }"
+    :class="{
+      'project-badge--sm': type === 'sm',
+      'project-badge--compact': size === 'compact',
+    }"
     :style="{ background: colorVar }"
   >
     {{ label }}
@@ -52,4 +59,18 @@ const colorVar = computed(() => {
   min-width: 40px;
   max-width: 40px;
 }
+
+.project-badge--compact {
+  padding: 4px;
+  border-radius: 6px;
+  font-size: 10px;
+  line-height: 10px;
+}
+
+.project-badge--compact.project-badge--sm {
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+}
+
 </style>

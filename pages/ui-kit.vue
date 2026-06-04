@@ -42,6 +42,9 @@ useHead({ title: 'UI Kit — CVSM' })
       <h2>Кнопки</h2>
       <div class="ui-kit__row">
         <DashboardIconButton label="Выход" icon-src="/images/logout.svg" />
+        <DashboardIconButton label="Скачать" size="nav">
+          <DashboardDownloadIcon />
+        </DashboardIconButton>
         <DashboardAccordionTextButton label="Пассажиропоток" />
       </div>
       <div class="ui-kit__primary-col">

@@ -6,18 +6,14 @@ const props = defineProps<{
   project: DashboardProject
 }>()
 
-const { selectedProjectId, selectProject } = useDashboardState()
-
-const isSelected = computed(() => selectedProjectId.value === props.project.id)
+const { openProject } = useDashboardState()
 </script>
 
 <template>
   <button
     type="button"
     class="project-list-button neo-interactive neo-button"
-    :class="{ 'project-list-button--selected': isSelected }"
-    :aria-pressed="isSelected"
-    @click="selectProject(project.id)"
+    @click="openProject(project.id)"
   >
     <span class="project-list-button__bg" aria-hidden="true" />
     <DashboardProjectBadge :type="project.type" />
@@ -31,26 +27,18 @@ const isSelected = computed(() => selectedProjectId.value === props.project.id)
 .project-list-button {
   position: relative;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 12px;
   width: 100%;
   height: 44px;
+  min-height: 44px;
   padding: 0 12px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   cursor: pointer;
   text-align: left;
   background: transparent;
-}
-
-.project-list-button--selected,
-.project-list-button--selected:hover:not(:disabled) {
-  border-color: var(--accent-muted);
-}
-
-.project-list-button--selected .project-list-button__title {
-  color: var(--accent-primary);
-  font-weight: 500;
 }
 
 .project-list-button__bg {
@@ -72,7 +60,7 @@ const isSelected = computed(() => selectedProjectId.value === props.project.id)
 
 .project-list-button :deep(.project-badge) {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   flex: 0 0 auto;
 }
 

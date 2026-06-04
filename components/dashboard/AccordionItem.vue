@@ -39,7 +39,10 @@ const panelId = useId()
       :class="{ 'accordion-item__panel--open': open }"
       :aria-hidden="!open"
     >
-      <div class="accordion-item__body">
+      <div
+        class="accordion-item__body"
+        :class="{ 'accordion-item__body--projects': type === 'projects' }"
+      >
         <slot />
       </div>
     </div>
@@ -55,6 +58,7 @@ const panelId = useId()
   border-radius: var(--radius-3xl);
   overflow: hidden;
   isolation: isolate;
+  flex-shrink: 0;
 }
 
 .accordion-item__bg {
@@ -117,6 +121,7 @@ const panelId = useId()
 .accordion-item__headline {
   position: relative;
   z-index: 1;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -193,5 +198,33 @@ const panelId = useId()
 .accordion-item--indicators .accordion-item__panel--open .accordion-item__body,
 .accordion-item--info .accordion-item__panel--open .accordion-item__body {
   padding: 0 16px 24px;
+}
+
+.accordion-item--projects.accordion-item--open {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* grid 1fr + min-height:0 схлопывает контент — для проектов flex-колонка */
+.accordion-item--projects.accordion-item--open .accordion-item__panel {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  grid-template-rows: unset;
+  transition: none;
+}
+
+.accordion-item--projects.accordion-item--open .accordion-item__body--projects {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  gap: 0;
 }
 </style>

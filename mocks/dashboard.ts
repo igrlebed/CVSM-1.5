@@ -29,6 +29,18 @@ export const dashboardMeta = {
 export const dashboardTitle =
   'Модель развития сети высокоскоростных железнодорожных магистралей Российской Федерации'
 
+export type ProjectWorkspaceNavId = 'projects' | 'indicators' | 'constructor' | 'ranking'
+
+export const projectWorkspaceNavTabs: ReadonlyArray<{
+  id: ProjectWorkspaceNavId
+  label: string
+}> = [
+  { id: 'projects', label: 'Проекты' },
+  { id: 'indicators', label: 'Показатели' },
+  { id: 'constructor', label: 'Конструктор' },
+  { id: 'ranking', label: 'Ранжирование' },
+]
+
 export const kpiItems: KpiItem[] = [
   { value: 32, label: 'Прирост ВВП,', labelLines: ['трлн руб.'] },
   { value: 32, label: 'Потребный объем', labelLines: ['инвестиций, трлн руб.'] },
@@ -42,6 +54,7 @@ export const kpiItems: KpiItem[] = [
   { value: 32, label: 'Потребный парк,', labelLines: ['вагоны'] },
 ]
 
+// MOCK: replace with GET /api/v1/projects
 export const projects: DashboardProject[] = [
   { id: '1', title: 'Москва – Рязань', type: 'vsm' },
   { id: '2', title: 'Москва – Екатеринбург', type: 'vsm' },
@@ -50,6 +63,18 @@ export const projects: DashboardProject[] = [
   { id: '5', title: 'Москва – Брянск', type: 'sm' },
   { id: '6', title: 'Москва – Ярославль', type: 'sm' },
   { id: '7', title: 'Москва – Адлер', type: 'vsm' },
+  { id: '8', title: 'Челябинск – граница РФ', type: 'vsm' },
+  { id: '9', title: 'Екатеринбург – Челябинск', type: 'vsm' },
+  { id: '10', title: 'Казань – Самара', type: 'vsm' },
+  { id: '11', title: 'Новосибирск – Иркутск', type: 'vsm' },
+  { id: '12', title: 'Екатеринбург – Новосибирск', type: 'vsm' },
+  { id: '13', title: 'Хабаровск – Владивосток', type: 'sm' },
+  { id: '14', title: 'Самара – Саранск', type: 'sm' },
+  { id: '15', title: 'Самара – Пенза', type: 'sm' },
+  { id: '16', title: 'Новосибирск – Томск', type: 'sm' },
+  { id: '17', title: 'Новосибирск – Кемерово', type: 'sm' },
+  { id: '18', title: 'Новосибирск – Новокузнецк', type: 'sm' },
+  { id: '19', title: 'Новосибирск – Барнаул', type: 'sm' },
 ]
 
 export type SidebarSectionId = 'projects' | 'indicators' | 'constructor' | 'ranking'
@@ -71,6 +96,18 @@ export const sidebarSections: Array<{
   { id: 'ranking', title: 'Ранжирование', type: 'info' },
 ]
 
+export const projectDetailTabs = [
+  { id: 'overview', label: 'Обзор' },
+  { id: 'passenger', label: 'Пассажиропоток' },
+  { id: 'socio', label: 'Социально-экономические эффекты' },
+  { id: 'invest', label: 'Инвестиции' },
+  { id: 'traffic', label: 'Размеры движения' },
+  { id: 'population', label: 'Охват населения' },
+  { id: 'technical', label: 'Технические параметры' },
+] as const
+
+export type ProjectDetailTabId = (typeof projectDetailTabs)[number]['id']
+
 export const indicatorItems = [
   'Пассажиропоток',
   'Социально-экономические эффекты',
@@ -78,7 +115,19 @@ export const indicatorItems = [
   'Размеры движения',
   'Охват населения',
   'Технические параметры',
-]
+] as const
+
+export type IndicatorItemLabel = (typeof indicatorItems)[number]
+
+/** Подпись в сайдбаре → вкладка на экране показателей */
+export const indicatorTabByLabel: Record<IndicatorItemLabel, ProjectDetailTabId> = {
+  'Пассажиропоток': 'passenger',
+  'Социально-экономические эффекты': 'socio',
+  'Инвестиции': 'invest',
+  'Размеры движения': 'traffic',
+  'Охват населения': 'population',
+  'Технические параметры': 'technical',
+}
 
 export const constructorSection: SidebarInfoSection = {
   description: 'Моделирование параметров реализации проектов и оценка эффектов',

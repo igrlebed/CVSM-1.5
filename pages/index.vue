@@ -2,7 +2,7 @@
 import { kpiItems } from '~/mocks/dashboard'
 import { useDashboardState } from '~/composables/useDashboardState'
 
-const { sidebarOpen, kpiLoading } = useDashboardState()
+const { sidebarOpen, kpiLoading, projectWorkspaceOpen } = useDashboardState()
 
 function closeSidebar() {
   sidebarOpen.value = false
@@ -10,7 +10,8 @@ function closeSidebar() {
 </script>
 
 <template>
-  <div class="desktop-main">
+  <DashboardProjectWorkspace v-if="projectWorkspaceOpen" />
+  <div v-else class="desktop-main">
     <DashboardHeader />
     <section class="desktop-main__kpi" aria-label="Ключевые показатели">
       <DashboardKpiCard
@@ -90,6 +91,14 @@ function closeSidebar() {
 
 .desktop-main__backdrop {
   display: none;
+}
+
+@media (min-width: 1025px) {
+  .desktop-main :deep(.sidebar) {
+    position: relative;
+    transform: none;
+    flex-shrink: 0;
+  }
 }
 
 @media (max-width: 1024px) {

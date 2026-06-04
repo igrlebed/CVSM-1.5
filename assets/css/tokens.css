@@ -12,6 +12,9 @@
   --accent-primary: #4e5ba6;
   --accent-muted: #9ea5d1;
   --accent-muted-100: #c8cce5;
+  --scroll-thumb: rgb(200 204 229 / 0.55);
+  --scroll-thumb-hover: rgb(200 204 229 / 0.85);
+  --scroll-thumb-width: 6px;
   --project-vsm: #fd853a;
   --project-vsm-minsk: #fedf89;
   --project-sm: #6172f3;
@@ -32,6 +35,8 @@
   --radius-2xl: 28px;
   --radius-3xl: 32px;
   --radius-4xl: 36px;
+  --radius-5xl: 40px;
+  --accent-muted-300: #f8f9fc;
   --gap-page: 8px;
   --gap-section: 20px;
   --gap-kpi: 12px;
@@ -44,6 +49,10 @@
   --shadow-outer: -5px 5px 10px 0 rgba(240, 240, 240, 0.2),
     5px -5px 10px 0 rgba(240, 240, 240, 0.2), -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
     5px 5px 13px 0 rgba(240, 240, 240, 0.9);
+  --shadow-modal-outer: -5px 5px 10px 0 rgba(240, 240, 240, 0.12),
+    5px -5px 10px 0 rgba(240, 240, 240, 0.12), -5px -5px 10px 0 rgba(255, 255, 255, 0.28),
+    5px 5px 13px 0 rgba(240, 240, 240, 0.32);
+  --shadow-drawer-outer: -12px 0 28px 0 rgb(28 58 115 / 14%), -4px 0 10px 0 rgb(28 58 115 / 8%);
   --shadow-outer-sidebar: -5px 5px 10px 0 rgba(228, 228, 228, 0.2),
     5px -5px 10px 0 rgba(228, 228, 228, 0.2), -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
     5px 5px 13px 0 rgba(228, 228, 228, 0.9);
@@ -56,6 +65,21 @@
   --shadow-inner-deep: inset -5px 5px 10px 0 rgba(245, 245, 245, 0.2),
     inset 5px -5px 10px 0 rgba(245, 245, 245, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
     inset 5px 5px 13px 0 rgba(245, 245, 245, 0.9);
+  /* TabBar chip — легче Figma item outer, читается как кнопка */
+  --shadow-tab-bar-chip: 0 1px 2px 0 rgb(28 58 115 / 8%), 0 0 0 1px rgb(255 255 255 / 0.6) inset;
+  --shadow-tab-bar-chip-hover: 0 2px 6px 0 rgb(28 58 115 / 10%), 0 0 0 1px rgb(255 255 255 / 0.75) inset;
+  /* Figma 3785:30411 — TabBar item Default outer */
+  --shadow-tab-item-outer: -1px 1px 2px 0 rgba(211, 211, 211, 0.2),
+    1px -1px 2px 0 rgba(211, 211, 211, 0.2), -1px -1px 2px 0 rgba(255, 255, 255, 0.9),
+    1px 1px 3px 0 rgba(211, 211, 211, 0.9);
+  /* Figma 3785:30411 — TabBar item Active (вдавливание) */
+  --shadow-tab-item-pressed: inset -5px 5px 10px 0 rgba(211, 212, 214, 0.2),
+    inset 5px -5px 10px 0 rgba(211, 212, 214, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
+    inset 5px 5px 13px 0 rgba(211, 212, 214, 0.9);
+  /* Figma 3785:28623 — ProjectCard Active */
+  --shadow-project-card-pressed: inset -5px 5px 10px 0 rgba(196, 196, 196, 0.2),
+    inset 5px -5px 10px 0 rgba(196, 196, 196, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
+    inset 5px 5px 13px 0 rgba(196, 196, 196, 0.9);
   --shadow-track-inset: inset -5px 5px 10px 0 rgba(225, 225, 225, 0.2),
     inset 5px -5px 10px 0 rgba(225, 225, 225, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
     inset 5px 5px 13px 0 rgba(225, 225, 225, 0.9);

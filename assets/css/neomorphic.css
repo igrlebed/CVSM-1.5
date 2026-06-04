@@ -204,6 +204,49 @@
   box-shadow: var(--shadow-track-inset);
 }
 
+/* Скролл — Figma scroll 4345:33713 (6px, thumb accent/muted-100) */
+.neo-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) transparent;
+}
+
+.neo-scroll:hover {
+  scrollbar-color: var(--scroll-thumb-hover) transparent;
+}
+
+.neo-scroll::-webkit-scrollbar,
+.neo-scroll:hover::-webkit-scrollbar,
+.neo-scroll:active::-webkit-scrollbar,
+.neo-scroll:focus-within::-webkit-scrollbar {
+  width: var(--scroll-thumb-width);
+  max-width: var(--scroll-thumb-width);
+  min-width: var(--scroll-thumb-width);
+}
+
+.neo-scroll::-webkit-scrollbar-track,
+.neo-scroll::-webkit-scrollbar-track:hover {
+  background: transparent;
+  border-radius: 24px;
+}
+
+.neo-scroll::-webkit-scrollbar-thumb,
+.neo-scroll::-webkit-scrollbar-thumb:hover,
+.neo-scroll::-webkit-scrollbar-thumb:active {
+  width: var(--scroll-thumb-width);
+  min-width: var(--scroll-thumb-width);
+  max-width: var(--scroll-thumb-width);
+  background-color: var(--scroll-thumb);
+  border: 0 solid transparent;
+  border-radius: 16px;
+  box-shadow: none;
+  background-clip: padding-box;
+}
+
+.neo-scroll::-webkit-scrollbar-thumb:hover,
+.neo-scroll::-webkit-scrollbar-thumb:active {
+  background-color: var(--scroll-thumb-hover);
+}
+
 .skeleton-pulse {
   animation: skeleton-pulse 1.2s ease-in-out infinite;
   background: linear-gradient(

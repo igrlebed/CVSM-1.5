@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { dashboardTitle } from '~/mocks/dashboard'
+import { useDashboardState } from '~/composables/useDashboardState'
+
+const { openUiVariantsModal } = useDashboardState()
 </script>
 
 <template>
@@ -8,13 +11,20 @@ import { dashboardTitle } from '~/mocks/dashboard'
     <div class="dashboard-header__inner neo-shell-inner">
       <span class="neo-shell-inner__bg" aria-hidden="true" />
       <div class="neo-shell-inner__content dashboard-header__content">
-        <img
-          src="/images/logo.svg"
-          alt="РЖД"
-          class="dashboard-header__logo"
-          width="45"
-          height="24"
-        />
+        <button
+          type="button"
+          class="dashboard-header__logo-btn neo-interactive"
+          aria-label="Варианты интерфейса"
+          @click="openUiVariantsModal"
+        >
+          <img
+            src="/images/logo.svg"
+            alt=""
+            class="dashboard-header__logo"
+            width="45"
+            height="24"
+          />
+        </button>
         <h1 class="dashboard-header__title">{{ dashboardTitle }}</h1>
         <DashboardIconButton label="Выход" icon-src="/images/logout.svg" />
       </div>
@@ -45,8 +55,23 @@ import { dashboardTitle } from '~/mocks/dashboard'
   padding: 0 16px;
 }
 
-.dashboard-header__logo {
+.dashboard-header__logo-btn {
+  display: flex;
   flex-shrink: 0;
+  padding: 4px;
+  margin: -4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+
+.dashboard-header__logo-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.dashboard-header__logo {
   display: block;
 }
 

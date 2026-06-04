@@ -2,10 +2,18 @@
 defineProps<{
   label: string
 }>()
+
+const emit = defineEmits<{
+  click: []
+}>()
 </script>
 
 <template>
-  <button type="button" class="accordion-text-button neo-interactive neo-button">
+  <button
+    type="button"
+    class="accordion-text-button neo-interactive neo-button"
+    @click="emit('click')"
+  >
     <span class="accordion-text-button__bg" aria-hidden="true" />
     <span class="accordion-text-button__label">{{ label }}</span>
     <span class="accordion-text-button__inset neo-button-inset" aria-hidden="true" />
