@@ -1,0 +1,87 @@
+:root {
+  --brand-color: #e31a1a;
+  --text-primary: #1c3a73;
+  --text-secondary: #60759b;
+  --text-muted: #bcc6d7;
+  --text-invert: #f2f3fa;
+  --island-external: #f5f5f5;
+  --island-inner: #fafafa;
+  --background-primary: #f9f9f9;
+  --border-primary: #d5d7da;
+  --border-secondary: #e9eaeb;
+  --accent-primary: #4e5ba6;
+  --accent-muted: #9ea5d1;
+  --accent-muted-100: #c8cce5;
+  --project-vsm: #fd853a;
+  --project-vsm-minsk: #fedf89;
+  --project-sm: #6172f3;
+  --project-msk-spb: #12b76a;
+  --focus-ring: #4e5ba6;
+  --font-family: 'Onest', system-ui, sans-serif;
+  --text-2xl-medium: 500 36px/40px var(--font-family);
+  --text-xl-medium: 500 20px/24px var(--font-family);
+  --text-md-medium: 500 16px/20px var(--font-family);
+  --text-md-regular: 400 16px/20px var(--font-family);
+  --text-sm-regular: 400 14px/16px var(--font-family);
+  --text-xs-regular: 400 12px/16px var(--font-family);
+  --text-xs-bold: 700 12px/12px var(--font-family);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
+  --radius-3xl: 32px;
+  --radius-4xl: 36px;
+  --gap-page: 8px;
+  --gap-section: 20px;
+  --gap-kpi: 12px;
+  --bp-sm: 1024px;
+  --bp-md: 1280px;
+  --sidebar-width: 360px;
+  --transition-fast: 150ms ease;
+  --transition-base: 220ms ease;
+  --shadow-outer: -5px 5px 10px 0 rgba(240, 240, 240, 0.2),
+    5px -5px 10px 0 rgba(240, 240, 240, 0.2), -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
+    5px 5px 13px 0 rgba(240, 240, 240, 0.9);
+  --shadow-outer-sidebar: -5px 5px 10px 0 rgba(228, 228, 228, 0.2),
+    5px -5px 10px 0 rgba(228, 228, 228, 0.2), -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
+    5px 5px 13px 0 rgba(228, 228, 228, 0.9);
+  --shadow-inset-soft: inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
+    inset -1px -1px 2px 0 rgba(240, 240, 240, 0.5);
+  --shadow-inset-soft-sidebar: inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
+    inset -1px -1px 2px 0 rgba(228, 228, 228, 0.5);
+  --shadow-inner-raised: 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
+    -1px -1px 2px 0 rgba(245, 245, 245, 0.5);
+  --shadow-inner-deep: inset -5px 5px 10px 0 rgba(245, 245, 245, 0.2),
+    inset 5px -5px 10px 0 rgba(245, 245, 245, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
+    inset 5px 5px 13px 0 rgba(245, 245, 245, 0.9);
+  --shadow-track-inset: inset -5px 5px 10px 0 rgba(225, 225, 225, 0.2),
+    inset 5px -5px 10px 0 rgba(225, 225, 225, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
+    inset 5px 5px 13px 0 rgba(225, 225, 225, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#__nuxt {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--background-primary);
+  color: var(--text-primary);
+}
