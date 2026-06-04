@@ -1,5 +1,7 @@
 # Архитектура CVSM
 
+Репозиторий: https://github.com/igrlebed/CVSM-1.5
+
 ## Стек
 
 - Nuxt 3, Vue 3 Composition API, TypeScript
