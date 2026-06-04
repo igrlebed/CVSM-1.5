@@ -36,5 +36,10 @@ defineProps<{
   height: 20px;
   display: block;
   color: var(--text-primary);
+  transition: transform var(--transition-base);
+}
+
+.accordion-chevron path {
+  transition: opacity var(--transition-fast);
 }
 </style>

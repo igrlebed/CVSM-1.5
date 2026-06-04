@@ -34,11 +34,14 @@ const panelId = useId()
       <DashboardAccordionChevron :up="open" />
     </button>
     <div
-      v-if="open"
       :id="panelId"
-      class="accordion-item__body"
+      class="accordion-item__panel"
+      :class="{ 'accordion-item__panel--open': open }"
+      :aria-hidden="!open"
     >
-      <slot />
+      <div class="accordion-item__body">
+        <slot />
+      </div>
     </div>
     <span class="accordion-item__inset" aria-hidden="true" />
   </section>
@@ -71,7 +74,7 @@ const panelId = useId()
 }
 
 .accordion-item--collapsed {
-  box-shadow: var(--shadow-outer-sidebar);
+  box-shadow: var(--shadow-outer);
 }
 
 .accordion-item--open {
@@ -95,7 +98,7 @@ const panelId = useId()
 }
 
 .accordion-item--collapsed .accordion-item__inset {
-  box-shadow: var(--shadow-inset-soft-sidebar);
+  box-shadow: var(--shadow-inset-soft);
 }
 
 .accordion-item--open.accordion-item--projects .accordion-item__inset {
@@ -125,6 +128,7 @@ const panelId = useId()
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;
+  transition: padding var(--transition-base);
 }
 
 .accordion-item--open .accordion-item__headline {
@@ -139,19 +143,55 @@ const panelId = useId()
   white-space: nowrap;
 }
 
-.accordion-item__body {
+.accordion-item__panel {
   position: relative;
   z-index: 1;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition-base);
+}
+
+.accordion-item__panel--open {
+  grid-template-rows: 1fr;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-item__panel {
+    transition: none;
+  }
+
+  .accordion-item__body {
+    transition: none;
+  }
+}
+
+.accordion-item__body {
+  overflow: hidden;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding: 0 8px 0;
+  opacity: 0;
+  transition:
+    opacity var(--transition-fast),
+    padding var(--transition-base);
+}
+
+.accordion-item__panel--open .accordion-item__body {
   padding: 0 8px 12px;
+  opacity: 1;
 }
 
 .accordion-item--indicators .accordion-item__body,
 .accordion-item--info .accordion-item__body {
   gap: 16px;
-  padding: 0 16px 24px;
+  padding: 0 16px 0;
   align-items: center;
+}
+
+.accordion-item--indicators .accordion-item__panel--open .accordion-item__body,
+.accordion-item--info .accordion-item__panel--open .accordion-item__body {
+  padding: 0 16px 24px;
 }
 </style>

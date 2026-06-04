@@ -21,9 +21,9 @@ function isActiveYear(year: number) {
 </script>
 
 <template>
-  <div class="year-slider">
-    <span class="year-slider__shell-bg" aria-hidden="true" />
-    <div class="year-slider__inner">
+  <div class="year-slider neo-shell-outer neo-shell-outer--fill">
+    <span class="neo-shell-outer__bg" aria-hidden="true" />
+    <div class="neo-shell-inner__content year-slider__inner">
       <div class="year-slider__track">
         <div class="year-slider__track-line" aria-hidden="true">
           <span class="year-slider__track-line-bg" />
@@ -50,53 +50,30 @@ function isActiveYear(year: number) {
           :aria-valuetext="`${modelYear}`"
         />
       </div>
-      <div class="year-slider__labels">
+      <div class="year-slider__labels" aria-hidden="true">
         <span
           v-for="year in timelineYears"
           :key="year"
+          class="year-slider__year"
           :class="{ 'year-slider__year--active': isActiveYear(year) }"
         >
           {{ year }}
         </span>
       </div>
     </div>
-    <span class="year-slider__shell-inset" aria-hidden="true" />
+    <span class="neo-shell-outer__inset" aria-hidden="true" />
   </div>
 </template>
 
 <style scoped>
 .year-slider {
-  position: relative;
   flex-shrink: 0;
   width: 100%;
   padding: 12px 20px;
-  border: 1px solid var(--border-primary);
   border-radius: var(--radius-xl);
-  isolation: isolate;
-  box-shadow: var(--shadow-outer);
-}
-
-.year-slider__shell-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: var(--background-primary);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.year-slider__shell-inset {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow: var(--shadow-inset-soft);
 }
 
 .year-slider__inner {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -113,7 +90,6 @@ function isActiveYear(year: number) {
   left: 0;
   right: 0;
   height: 14px;
-  border: 1px solid var(--border-primary);
   border-radius: var(--radius-xl);
   pointer-events: none;
 }
@@ -123,6 +99,7 @@ function isActiveYear(year: number) {
   inset: 0;
   border-radius: inherit;
   background: var(--background-primary);
+  border: 1px solid var(--border-secondary);
 }
 
 .year-slider__track-line-inset {
@@ -152,29 +129,43 @@ function isActiveYear(year: number) {
   border-radius: 50%;
   background: var(--island-external);
   border: 1.17px solid var(--accent-muted-100);
-  box-shadow: var(--shadow-outer-sidebar), var(--shadow-inset-soft-sidebar);
+  box-shadow:
+    -5px 5px 10px 0 rgba(228, 228, 228, 0.2),
+    5px -5px 10px 0 rgba(228, 228, 228, 0.2),
+    -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
+    5px 5px 13px 0 rgba(228, 228, 228, 0.9);
   pointer-events: none;
   transition: left var(--transition-base);
 }
 
+/* вдавленная центральная точка — как в Figma (filter innerShadow на Ellipse) */
 .year-slider__thumb::after {
   content: '';
   position: absolute;
   inset: 7px;
   border-radius: 50%;
   background: var(--accent-muted-100);
+  box-shadow:
+    inset 1.5px 1.5px 3px 0 rgba(83, 103, 176, 0.5),
+    inset -1px -1px 2px 0 rgba(185, 193, 225, 0.45),
+    inset 0.5px 0.5px 1px 0 rgba(114, 131, 176, 0.35),
+    inset -0.5px -0.5px 1px 0 rgba(220, 225, 245, 0.25);
 }
 
 .year-slider__labels {
   display: flex;
   justify-content: space-between;
+  gap: 0;
   font: var(--text-xs-regular);
   line-height: 16px;
-  white-space: nowrap;
 }
 
-.year-slider__labels span {
+.year-slider__year {
+  flex: 1 1 0;
+  min-width: 0;
   color: var(--text-muted);
+  text-align: center;
+  transition: color var(--transition-fast);
 }
 
 .year-slider__year--active {
@@ -196,12 +187,6 @@ function isActiveYear(year: number) {
 .year-slider__track:has(.year-slider__input:hover) .year-slider__thumb,
 .year-slider__track:has(.year-slider__input:focus-visible) .year-slider__thumb {
   border-color: var(--accent-muted);
-  box-shadow:
-    -6px 6px 12px 0 rgba(228, 228, 228, 0.28),
-    6px -6px 12px 0 rgba(228, 228, 228, 0.28),
-    -6px -6px 12px 0 rgba(255, 255, 255, 0.95),
-    6px 6px 16px 0 rgba(228, 228, 228, 0.95),
-    var(--shadow-inset-soft-sidebar);
 }
 
 .year-slider__track:has(.year-slider__input:focus-visible) .year-slider__thumb {

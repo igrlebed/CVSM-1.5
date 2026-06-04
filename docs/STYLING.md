@@ -2,50 +2,35 @@
 
 ## Визуальный язык
 
-Светлый **soft UI / неоморфизм**: «острова» на фоне `--background-primary`, двойные внешние и inset-тени, скругления 16–36px. Типографика **Onest**, палитра текста — холодный синий (`--text-primary` → `--text-muted`).
+Светлый **soft UI / неоморфизм**: «острова» на фоне `--background-primary`, двойные внешние и inset-тени, скругления 16–36px.
 
-## Когда какой слой
+## Двойная оболочка (обязательно)
 
-| Слой | Компонент / класс | Назначение |
-|------|-------------------|------------|
-| Outer | `UiNeoSurface depth="outer"` / `.neo-outer` | KPI, карта, слайдер, легенда |
-| Outer sidebar | `tone="sidebar"` / `.neo-outer--sidebar` | Сайдбар, карта (чуть контрастнее тень) |
-| Inner | `depth="inner"` / `.neo-inner` | Контент внутри outer-рамки |
-| Inner deep | `depth="inner-deep"` | KPI body, область карты, легенда |
-| Track | `depth="track"` | Вдавленный трек слайдера |
-| Кнопка | `.neo-button` + `.neo-interactive` | Hover/focus/active |
+Все блоки-острова (header, KPI, карта, легенда, слайдер) строятся из **одинаковой пары слоёв**:
 
-## Токены теней
+| Слой | Классы | Border | Фон `__bg` | Inset-тень |
+|------|--------|--------|------------|------------|
+| **Внешний** | `.neo-shell-outer` + `__bg` + `__inset` | `--border-primary` | `--island-external` | `--shadow-inset-soft` |
+| **Внутренний** | `.neo-shell-inner` + `__bg` + `__inset` | `--border-secondary` | `--island-inner` | `--shadow-inner-deep` |
 
-Определены в `assets/css/tokens.css`: `--shadow-outer`, `--shadow-outer-sidebar`, `--shadow-inset-soft`, `--shadow-inner-deep`, `--shadow-track-inset`.
+- Отступ между слоями: `--shell-gap` (4px) на `.neo-shell-outer`
+- Контент: `.neo-shell-inner__content` (`z-index: 1`)
+- Исключение фона внешнего слоя: `.neo-shell-outer--fill` (слайдер) — `--background-primary`
 
-## Состояния
+Не дублировать border/box-shadow в scoped-стилях компонентов — только радиусы, размеры и layout.
 
-- **Интерактив**: класс `.neo-interactive` — hover (inset глубже), `:focus-visible` (outline `--focus-ring`), `:active` (scale 0.99).
-- **Слайдер**: `:has(input:focus-visible)` подсвечивает thumb.
-- **Аккордеон**: `aria-expanded`, анимация `grid-template-rows`, `prefers-reduced-motion` отключает transition.
+## Прочие классы
+
+| Назначение | Классы |
+|------------|--------|
+| Кнопка secondary | `.neo-button` + `.neo-interactive` |
+| Primary | `PrimaryButton` + `.neo-accent-button` |
+| Трек слайдера | `.neo-shell-inner.neo-shell-inner--track` |
 
 ## Состояние приложения
 
-`plugins/dashboard-state.ts` — provide `useDashboardState()`:
-
-- `modelYear` — год сценария (слайдер)
-- `selectedProjectId` — выбранный проект в сайдбаре
-- `sidebarOpen` — drawer на `< 1024px`
-- `kpiLoading` — skeleton KPI (демо на `/ui-kit`)
-
-## Адаптив
-
-| Breakpoint | Поведение |
-|------------|-----------|
-| `≤ 1280px` | KPI 3×2, скрыт «Обновлено» в header |
-| `≤ 1024px` | KPI 2 колонки, сайдбар — overlay + кнопка «Меню» |
-| `≤ 640px` | KPI — горизонтальный scroll-snap |
-
-## PrimeVue
-
-Пресет `theme/cvsm-preset.ts` (Aura + токены CVSM). Использовать Prime для сложных виджетов (таблицы, диалоги); дашборд — кастомные компоненты.
+`useDashboardState()` — год, проект, сайдbar, KPI loading. См. `docs/ARCHITECTURE.md`.
 
 ## UI Kit
 
-Страница `/ui-kit` — NeoSurface, KPI, кнопки, слайдер, бейджи.
+`/ui-kit` — витрина компонентов.

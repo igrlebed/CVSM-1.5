@@ -1,45 +1,123 @@
-.neo-outer {
-  background: var(--island-external);
+/* Внешний / внутренний контейнер — единая пара слоёв для всех «островов» */
+.neo-shell-outer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  isolation: isolate;
+  overflow: hidden;
+  padding: var(--shell-gap);
   border: 1px solid var(--border-primary);
   box-shadow: var(--shadow-outer);
 }
 
-.neo-outer--sidebar {
-  box-shadow: var(--shadow-outer-sidebar);
+.neo-shell-outer__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: var(--island-external);
+  pointer-events: none;
 }
 
-.neo-inner {
-  background: var(--island-inner);
+.neo-shell-outer__inset {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--shadow-inset-soft);
+}
+
+.neo-shell-outer--fill .neo-shell-outer__bg {
+  background: var(--background-primary);
+}
+
+.neo-shell-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  isolation: isolate;
+  overflow: hidden;
   border: 1px solid var(--border-secondary);
   box-shadow: var(--shadow-inner-raised);
 }
 
-.neo-inset-outer {
+.neo-shell-inner__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: var(--island-inner);
+  pointer-events: none;
+}
+
+.neo-shell-inner__inset {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: var(--shadow-inner-deep);
+}
+
+.neo-shell-inner__content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+.neo-outer,
+.neo-shell-outer {
+  background: transparent;
+  border: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-outer);
+}
+
+.neo-inner,
+.neo-shell-inner {
+  background: transparent;
+  border: 1px solid var(--border-secondary);
+  box-shadow: var(--shadow-inner-raised);
+}
+
+.neo-inset-outer,
+.neo-shell-outer__inset {
   box-shadow: var(--shadow-inset-soft);
 }
 
-.neo-inset-outer--sidebar {
-  box-shadow: var(--shadow-inset-soft-sidebar);
-}
-
-.neo-inset-inner {
+.neo-inset-inner,
+.neo-shell-inner__inset {
   box-shadow: var(--shadow-inner-deep);
 }
 
 .neo-button {
   background: transparent;
   border: 1px solid var(--border-primary);
-  box-shadow: var(--shadow-outer-sidebar);
+  box-shadow: var(--shadow-outer);
 }
 
 .neo-button-inset {
-  box-shadow: var(--shadow-inset-soft-sidebar);
+  box-shadow: var(--shadow-inset-soft);
 }
 
 .neo-accent-button {
   background: transparent;
   border: 1px solid var(--accent-muted);
-  box-shadow: var(--shadow-outer-sidebar);
+  box-shadow: var(--shadow-outer);
+}
+
+.neo-interactive.neo-accent-button:hover:not(:disabled) .primary-button__label {
+  color: var(--text-primary);
+}
+
+.neo-interactive.neo-accent-button:hover:not(:disabled) .primary-button__bg {
+  background: var(--island-inner);
 }
 
 .neo-interactive {
@@ -100,7 +178,7 @@
 
 .neo-interactive:active:not(:disabled).neo-button,
 .neo-interactive:active:not(:disabled).neo-accent-button {
-  box-shadow: var(--shadow-outer-sidebar);
+  box-shadow: var(--shadow-outer);
 }
 
 .neo-interactive:focus-visible {
@@ -113,73 +191,17 @@
   cursor: not-allowed;
 }
 
-.neo-surface {
-  position: relative;
-  isolation: isolate;
-}
-
-.neo-surface--outer {
+.neo-shell-inner--track {
   border: 1px solid var(--border-primary);
-  box-shadow: var(--shadow-outer);
+  box-shadow: none;
 }
 
-.neo-surface--outer-sidebar {
-  border: 1px solid var(--border-primary);
-  box-shadow: var(--shadow-outer-sidebar);
-}
-
-.neo-surface--inner {
-  border: 1px solid var(--border-secondary);
-  box-shadow: var(--shadow-inner-raised);
-}
-
-.neo-surface__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  transition: background-color var(--transition-fast);
-}
-
-.neo-surface--outer .neo-surface__bg,
-.neo-surface--outer-sidebar .neo-surface__bg {
-  background: var(--island-external);
-}
-
-.neo-surface--inner .neo-surface__bg {
-  background: var(--island-inner);
-}
-
-.neo-surface--fill-bg .neo-surface__bg {
+.neo-shell-inner--track .neo-shell-inner__bg {
   background: var(--background-primary);
 }
 
-.neo-surface__inset {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  box-shadow: var(--shadow-inset-soft);
-  transition: box-shadow var(--transition-fast);
-}
-
-.neo-surface--outer-sidebar .neo-surface__inset {
-  box-shadow: var(--shadow-inset-soft-sidebar);
-}
-
-.neo-surface--inner-deep .neo-surface__inset {
-  box-shadow: var(--shadow-inner-deep);
-}
-
-.neo-surface--track .neo-surface__inset {
+.neo-shell-inner--track .neo-shell-inner__inset {
   box-shadow: var(--shadow-track-inset);
-}
-
-.neo-surface__content {
-  position: relative;
-  z-index: 1;
 }
 
 .skeleton-pulse {

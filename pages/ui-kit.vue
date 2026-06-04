@@ -42,8 +42,12 @@ useHead({ title: 'UI Kit — CVSM' })
       <h2>Кнопки</h2>
       <div class="ui-kit__row">
         <DashboardIconButton label="Выход" icon-src="/images/logout.svg" />
-        <DashboardMapModelButton />
         <DashboardAccordionTextButton label="Пассажиропоток" />
+      </div>
+      <div class="ui-kit__primary-col">
+        <DashboardPrimaryButton label="Модель развития сети СМ и ВСМ" size="lg" />
+        <DashboardPrimaryButton label="Открыть конструктор" size="md" />
+        <DashboardPrimaryButton label="Перейти к ранжированию" size="md" />
       </div>
     </section>
 
@@ -114,5 +118,13 @@ useHead({ title: 'UI Kit — CVSM' })
   gap: 8px;
   margin-bottom: 12px;
   font: var(--text-sm-regular);
+}
+
+.ui-kit__primary-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 360px;
+  margin-top: 12px;
 }
 </style>

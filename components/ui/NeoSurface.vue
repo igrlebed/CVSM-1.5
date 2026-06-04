@@ -1,6 +1,6 @@
 <script setup lang="ts">
-type NeoTone = 'default' | 'sidebar' | 'fill'
 type NeoDepth = 'outer' | 'inner' | 'inner-deep' | 'track'
+type NeoTone = 'default' | 'fill'
 
 const props = withDefaults(
   defineProps<{
@@ -21,32 +21,33 @@ const props = withDefaults(
   },
 )
 
-const surfaceClass = computed(() => {
-  const classes = ['neo-surface']
+const rootClass = computed(() => {
   if (props.depth === 'outer') {
-    classes.push(props.tone === 'sidebar' ? 'neo-surface--outer-sidebar' : 'neo-surface--outer')
-  } else if (props.depth === 'inner') {
-    classes.push('neo-surface--inner')
-  } else if (props.depth === 'inner-deep') {
-    classes.push('neo-surface--inner', 'neo-surface--inner-deep')
-  } else if (props.depth === 'track') {
-    classes.push('neo-surface--track')
+    return ['neo-shell-outer', props.tone === 'fill' ? 'neo-shell-outer--fill' : null]
   }
-  if (props.tone === 'fill') classes.push('neo-surface--fill-bg')
-  return classes
+  if (props.depth === 'track') {
+    return ['neo-shell-inner', 'neo-shell-inner--track']
+  }
+  return ['neo-shell-inner']
 })
 </script>
 
 <template>
   <component
     :is="tag"
-    :class="surfaceClass"
+    :class="rootClass"
     :style="{ borderRadius: radius, padding, overflow }"
   >
-    <span class="neo-surface__bg" aria-hidden="true" />
-    <div class="neo-surface__content">
+    <span
+      :class="depth === 'outer' ? 'neo-shell-outer__bg' : 'neo-shell-inner__bg'"
+      aria-hidden="true"
+    />
+    <div class="neo-shell-inner__content">
       <slot />
     </div>
-    <span class="neo-surface__inset" aria-hidden="true" />
+    <span
+      :class="depth === 'outer' ? 'neo-shell-outer__inset' : 'neo-shell-inner__inset'"
+      aria-hidden="true"
+    />
   </component>
 </template>
