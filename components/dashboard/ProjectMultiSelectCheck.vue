@@ -7,10 +7,10 @@ defineProps<{
 
 <template>
   <span
-    class="project-multi-check"
+    class="neo-check project-multi-check"
     :class="{
-      'project-multi-check--checked': checked,
-      'project-multi-check--indeterminate': indeterminate && !checked,
+      'neo-check--checked': checked,
+      'neo-check--indeterminate': indeterminate && !checked,
     }"
     aria-hidden="true"
   >
@@ -36,27 +36,6 @@ defineProps<{
 </template>
 
 <style scoped>
-.project-multi-check {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-  background: var(--island-external);
-  box-shadow: var(--shadow-inset-soft);
-  color: var(--text-invert);
-}
-
-.project-multi-check--checked,
-.project-multi-check--indeterminate {
-  border-color: var(--accent-primary);
-  background: var(--accent-primary);
-  box-shadow: none;
-}
-
 .project-multi-check__dash {
   width: 8px;
   height: 2px;

@@ -35,6 +35,8 @@ useHead({ title: 'UI Kit — CVSM' })
       <div class="ui-kit__kpi-row">
         <DashboardKpiCard :item="kpiItems[0]" :loading="kpiLoading" />
         <DashboardKpiCard :item="kpiItems[1]" :loading="kpiLoading" />
+        <DashboardKpiCard :item="kpiItems[0]" size="sm" />
+        <DashboardKpiCard :item="kpiItems[3]" size="sm" />
       </div>
     </section>
 
@@ -42,6 +44,9 @@ useHead({ title: 'UI Kit — CVSM' })
       <h2>Кнопки</h2>
       <div class="ui-kit__row">
         <DashboardIconButton label="Выход" icon-src="/images/logout.svg" />
+        <DashboardIconButton label="Добавить сценарий" size="nav">
+          <DashboardPlusIcon />
+        </DashboardIconButton>
         <DashboardIconButton label="Скачать" size="nav">
           <DashboardDownloadIcon />
         </DashboardIconButton>

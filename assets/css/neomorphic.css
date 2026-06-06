@@ -7,7 +7,7 @@
   isolation: isolate;
   overflow: hidden;
   padding: var(--shell-gap);
-  border: 1px solid var(--border-primary);
+  border: var(--border-width) solid var(--border-stroke);
   box-shadow: var(--shadow-outer);
 }
 
@@ -42,7 +42,7 @@
   min-height: 0;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid var(--border-secondary);
+  border: var(--border-width) solid var(--border-stroke-inner);
   box-shadow: var(--shadow-inner-raised);
 }
 
@@ -75,14 +75,14 @@
 .neo-outer,
 .neo-shell-outer {
   background: transparent;
-  border: 1px solid var(--border-primary);
+  border: var(--border-width) solid var(--border-stroke);
   box-shadow: var(--shadow-outer);
 }
 
 .neo-inner,
 .neo-shell-inner {
   background: transparent;
-  border: 1px solid var(--border-secondary);
+  border: var(--border-width) solid var(--border-stroke-inner);
   box-shadow: var(--shadow-inner-raised);
 }
 
@@ -98,26 +98,93 @@
 
 .neo-button {
   background: transparent;
-  border: 1px solid var(--border-primary);
+  border: var(--border-width) solid var(--border-stroke);
   box-shadow: var(--shadow-outer);
+}
+
+.neo-button--active,
+.neo-interactive.neo-button--active:not(:disabled) {
+  border-color: var(--border-active);
+}
+
+.neo-interactive.neo-button--active:hover:not(:disabled),
+.neo-interactive.neo-button--active:active:not(:disabled) {
+  border-color: var(--border-active);
+}
+
+.neo-button--sidebar {
+  box-shadow: var(--shadow-outer-sidebar);
 }
 
 .neo-button-inset {
   box-shadow: var(--shadow-inset-soft);
 }
 
+/* Элемент выбора — единый паттерн: карточки, pill, сценарии, модалки */
+.neo-select-pill {
+  position: relative;
+  overflow: hidden;
+  border: var(--border-width) solid var(--border-stroke);
+  background: transparent;
+  box-shadow: var(--shadow-outer);
+  isolation: isolate;
+}
+
+.neo-select-pill__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: var(--select-pill-surface);
+  pointer-events: none;
+  transition: background-color var(--transition-fast);
+}
+
+.neo-select-pill__inset {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: box-shadow var(--transition-fast);
+}
+
+.neo-select-pill__content {
+  position: relative;
+  z-index: 1;
+}
+
+.neo-select-pill:not(.neo-select-pill--selected) .neo-select-pill__inset {
+  box-shadow: none;
+}
+
+.neo-select-pill--selected {
+  border-color: var(--border-stroke);
+  box-shadow: none;
+  transform: none;
+}
+
+.neo-select-pill--selected .neo-select-pill__inset {
+  box-shadow: var(--shadow-select-pressed);
+}
+
+.neo-select-pill__title {
+  color: var(--text-primary);
+}
+
+.neo-button--sidebar .neo-button-inset,
+.neo-button--sidebar [class*='__inset'] {
+  box-shadow: var(--shadow-inset-soft-sidebar);
+}
+
 .neo-accent-button {
   background: transparent;
-  border: 1px solid var(--accent-muted);
+  border: var(--border-width) solid var(--border-accent);
   box-shadow: var(--shadow-outer);
 }
 
 .neo-interactive.neo-accent-button:hover:not(:disabled) .primary-button__label {
   color: var(--text-primary);
-}
-
-.neo-interactive.neo-accent-button:hover:not(:disabled) .primary-button__bg {
-  background: var(--island-inner);
 }
 
 .neo-interactive {
@@ -130,25 +197,49 @@
     color var(--transition-fast);
 }
 
-.neo-interactive:hover:not(:disabled).neo-button,
+.neo-interactive:hover:not(:disabled).neo-button:not(.neo-button--active):not(.neo-select-pill--selected),
 .neo-interactive:hover:not(:disabled).neo-accent-button {
-  border-color: var(--accent-muted);
-  box-shadow:
-    -6px 6px 12px 0 rgba(228, 228, 228, 0.28),
-    6px -6px 12px 0 rgba(228, 228, 228, 0.28),
-    -6px -6px 12px 0 rgba(255, 255, 255, 0.95),
-    6px 6px 16px 0 rgba(228, 228, 228, 0.95);
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-outer-hover);
 }
 
 .neo-interactive:hover:not(:disabled) [class*='__inset'],
 .neo-interactive:hover:not(:disabled) .neo-button-inset {
-  box-shadow:
-    inset 2px 2px 5px 0 rgba(255, 255, 255, 0.4),
-    inset -2px -2px 5px 0 rgba(228, 228, 228, 0.6);
+  box-shadow: var(--shadow-inset-hover);
 }
 
 .neo-interactive:hover:not(:disabled) [class*='__bg'] {
   background: var(--island-inner);
+}
+
+.neo-select-pill:not(.neo-select-pill--selected).neo-interactive:hover:not(:disabled).neo-button {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-outer-hover);
+}
+
+.neo-select-pill:not(.neo-select-pill--selected).neo-interactive:hover:not(:disabled) .neo-select-pill__bg {
+  background: var(--select-pill-surface);
+}
+
+.neo-select-pill:not(.neo-select-pill--selected).neo-interactive:hover:not(:disabled) .neo-select-pill__inset {
+  box-shadow: none;
+}
+
+.neo-select-pill--selected.neo-interactive:hover:not(:disabled).neo-button,
+.neo-select-pill--selected.neo-interactive:active:not(:disabled).neo-button {
+  border-color: var(--border-hover);
+  box-shadow: none;
+  transform: none;
+}
+
+.neo-select-pill--selected.neo-interactive:hover:not(:disabled) .neo-select-pill__bg,
+.neo-select-pill--selected.neo-interactive:active:not(:disabled) .neo-select-pill__bg {
+  background: var(--select-pill-surface);
+}
+
+.neo-select-pill--selected.neo-interactive:hover:not(:disabled) .neo-select-pill__inset,
+.neo-select-pill--selected.neo-interactive:active:not(:disabled) .neo-select-pill__inset {
+  box-shadow: var(--shadow-select-pressed);
 }
 
 .neo-interactive--flat {
@@ -157,7 +248,7 @@
 }
 
 .neo-interactive--flat:hover:not(:disabled) {
-  border-color: var(--border-secondary);
+  border-color: var(--border-stroke-inner);
   background: var(--island-external);
   box-shadow: var(--shadow-inset-soft);
 }
@@ -169,7 +260,7 @@
 }
 
 .neo-interactive--headline:hover:not(:disabled) {
-  background: rgba(200, 204, 229, 0.12);
+  background: var(--headline-hover-bg);
 }
 
 .neo-interactive:active:not(:disabled) {
@@ -192,7 +283,7 @@
 }
 
 .neo-shell-inner--track {
-  border: 1px solid var(--border-primary);
+  border: var(--border-width) solid var(--border-stroke);
   box-shadow: none;
 }
 
@@ -265,4 +356,91 @@
   100% {
     background-position: -100% 0;
   }
+}
+
+/* Сворачиваемые панели — та же анимация, что у аккордеона главной */
+.neo-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--transition-base);
+}
+
+.neo-collapse--open {
+  grid-template-rows: 1fr;
+}
+
+.neo-collapse:not(.neo-collapse--open) {
+  pointer-events: none;
+}
+
+.neo-collapse__body {
+  overflow: hidden;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neo-collapse {
+    transition: none;
+  }
+}
+
+/* Выпадающие панели / меню */
+.neo-dropdown-panel {
+  border: var(--border-width) solid var(--border-stroke);
+  background: var(--island-inner);
+  box-shadow: var(--shadow-modal-outer);
+  overflow: hidden;
+}
+
+/* Градиент при скролле — viewport + fade-слои */
+.neo-scroll-viewport {
+  position: relative;
+}
+
+.neo-scroll-fade {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: var(--scroll-fade-height);
+  pointer-events: none;
+}
+
+.neo-scroll-fade--top {
+  top: 0;
+  background: linear-gradient(
+    180deg,
+    var(--scroll-fade-color, var(--island-inner)) 28%,
+    transparent 100%
+  );
+}
+
+.neo-scroll-fade--bottom {
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--scroll-fade-color, var(--island-inner)) 72%
+  );
+}
+
+/* Чекбокс внутри neo-select-pill (мультивыбор проектов) */
+.neo-check {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: var(--border-width) solid var(--border-stroke);
+  border-radius: var(--radius-sm);
+  background: var(--select-pill-surface);
+  color: var(--text-invert);
+  box-shadow: none;
+}
+
+.neo-check--checked,
+.neo-check--indeterminate {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary);
 }

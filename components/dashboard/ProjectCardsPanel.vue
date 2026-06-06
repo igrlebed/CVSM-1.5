@@ -214,29 +214,23 @@ function carouselNext() {
         />
       </div>
 
-      <button
-        type="button"
-        class="project-cards-carousel__nav project-cards-carousel__nav--prev neo-interactive neo-button"
+      <UiNeoButtonShell
+        class="project-cards-carousel__nav project-cards-carousel__nav--prev"
         aria-label="Предыдущие проекты"
         :disabled="!canCarouselPrev"
         @click="carouselPrev"
       >
-        <span class="project-cards-carousel__nav-bg" aria-hidden="true" />
         <DashboardChevronLeftIcon />
-        <span class="project-cards-carousel__nav-inset neo-button-inset" aria-hidden="true" />
-      </button>
+      </UiNeoButtonShell>
 
-      <button
-        type="button"
-        class="project-cards-carousel__nav project-cards-carousel__nav--next neo-interactive neo-button"
+      <UiNeoButtonShell
+        class="project-cards-carousel__nav project-cards-carousel__nav--next"
         aria-label="Следующие проекты"
         :disabled="!canCarouselNext"
         @click="carouselNext"
       >
-        <span class="project-cards-carousel__nav-bg" aria-hidden="true" />
         <DashboardChevronRightIcon />
-        <span class="project-cards-carousel__nav-inset neo-button-inset" aria-hidden="true" />
-      </button>
+      </UiNeoButtonShell>
     </div>
   </div>
 </template>
@@ -244,7 +238,7 @@ function carouselNext() {
 <style scoped>
 .project-cards-panel--scroll {
   display: flex;
-  gap: 8px;
+  gap: var(--gap-xs);
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -273,12 +267,12 @@ function carouselNext() {
   visibility: hidden;
   pointer-events: none;
   display: flex;
-  gap: 8px;
+  gap: var(--gap-xs);
 }
 
 .project-cards-carousel__viewport {
   display: flex;
-  gap: 8px;
+  gap: var(--gap-xs);
   align-items: stretch;
   min-height: 108px;
   padding: 0 54px;
@@ -302,11 +296,7 @@ function carouselNext() {
   height: 108px;
   padding: 0;
   border-radius: var(--radius-xl);
-  border-color: var(--border-secondary);
-  box-shadow: var(--shadow-outer);
   overflow: hidden;
-  cursor: pointer;
-  background: transparent;
 }
 
 .project-cards-carousel__nav--prev {
@@ -320,23 +310,6 @@ function carouselNext() {
 .project-cards-carousel__nav:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  pointer-events: none;
-}
-
-.project-cards-carousel__nav-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: var(--island-external);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.project-cards-carousel__nav-inset {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
   pointer-events: none;
 }
 

@@ -9,7 +9,15 @@ import {
   indicatorTabByLabel,
 } from '~/mocks/dashboard'
 import {
+  constructorAlternativeScenarioTemplate,
+  constructorBaseScenario,
+  constructorNetworkKmForProjectsCount,
+  type ConstructorScenario,
+  type ConstructorScenarioId,
+} from '~/mocks/constructor'
+import {
   getEffectiveProjectSelectionVariant,
+  type ConstructorProjectsVariant,
   type ProjectWorkspaceCardsVariant,
 } from '~/mocks/uiVariants'
 
@@ -32,6 +40,125 @@ export function createDashboardState() {
   const activeWorkspaceNav = ref<ProjectWorkspaceNavId>('projects')
   const uiVariantsOpen = ref(false)
   const projectWorkspaceCardsVariant = ref<ProjectWorkspaceCardsVariant>('scroll')
+  const constructorProjectsVariant = ref<ConstructorProjectsVariant>('grid')
+  const constructorBaselineProjectIds = ref<Set<string>>(new Set(allProjectIds()))
+  const constructorActiveScenarioId = ref<ConstructorScenarioId>('base')
+  const constructorAlternativeCreated = ref(false)
+  const constructorAlternativeProjectIds = ref<Set<string>>(new Set())
+
+  const isConstructorWorkspace = computed(
+    () => activeWorkspaceNav.value === 'constructor',
+  )
+
+  const isConstructorScenarioLocked = computed(
+    () => constructorActiveScenarioId.value === 'base',
+  )
+
+  const constructorScenarios = computed<ConstructorScenario[]>(() => {
+    const list: ConstructorScenario[] = [
+      {
+        ...constructorBaseScenario,
+        projectsCount: projects.length,
+        networkKm: constructorBaseScenario.networkKm,
+      },
+    ]
+
+    if (constructorAlternativeCreated.value) {
+      const count =
+        constructorActiveScenarioId.value === 'alternative'
+          ? selectedProjectIds.value.size
+          : constructorAlternativeProjectIds.value.size
+
+      list.push({
+        ...constructorAlternativeScenarioTemplate,
+        projectsCount: count,
+        networkKm: constructorNetworkKmForProjectsCount(count),
+      })
+    }
+
+    return list
+  })
+
+  const canCreateConstructorScenario = computed(
+    () => !constructorAlternativeCreated.value,
+  )
+
+  const constructorProjectsSelectionChanged = computed(() => {
+    if (isConstructorScenarioLocked.value) {
+      return false
+    }
+    const baseline = constructorBaselineProjectIds.value
+    const current = selectedProjectIds.value
+    if (baseline.size !== current.size) {
+      return true
+    }
+    for (const id of baseline) {
+      if (!current.has(id)) {
+        return true
+      }
+    }
+    return false
+  })
+
+  function snapshotConstructorProjectBaseline() {
+    constructorBaselineProjectIds.value = new Set(selectedProjectIds.value)
+  }
+
+  function resetConstructorProjectsToBaseline() {
+    if (isConstructorScenarioLocked.value) {
+      return
+    }
+    selectedProjectIds.value = new Set(constructorBaselineProjectIds.value)
+    selectedProjectId.value = null
+    if (constructorActiveScenarioId.value === 'alternative') {
+      constructorAlternativeProjectIds.value = new Set(selectedProjectIds.value)
+    }
+  }
+
+  function persistAlternativeProjectSelection() {
+    if (constructorActiveScenarioId.value === 'alternative') {
+      constructorAlternativeProjectIds.value = new Set(selectedProjectIds.value)
+    }
+  }
+
+  function selectConstructorScenario(id: ConstructorScenarioId) {
+    if (id === 'alternative' && !constructorAlternativeCreated.value) {
+      return
+    }
+
+    if (constructorActiveScenarioId.value === 'alternative') {
+      constructorAlternativeProjectIds.value = new Set(selectedProjectIds.value)
+    }
+
+    constructorActiveScenarioId.value = id
+
+    if (id === 'base') {
+      selectAllProjects()
+    } else {
+      selectedProjectIds.value = new Set(constructorAlternativeProjectIds.value)
+      selectedProjectId.value = null
+    }
+
+    snapshotConstructorProjectBaseline()
+  }
+
+  function createConstructorAlternativeScenario() {
+    if (!canCreateConstructorScenario.value) {
+      return
+    }
+    constructorAlternativeCreated.value = true
+    constructorAlternativeProjectIds.value = new Set()
+    selectConstructorScenario('alternative')
+  }
+
+  function deleteConstructorScenario(id: ConstructorScenarioId) {
+    if (id !== 'alternative' || !constructorAlternativeCreated.value) {
+      return
+    }
+    constructorAlternativeCreated.value = false
+    constructorAlternativeProjectIds.value = new Set()
+    selectConstructorScenario('base')
+  }
 
   const isIndicatorsWorkspace = computed(
     () =>
@@ -39,10 +166,18 @@ export function createDashboardState() {
       || activeWorkspaceNav.value === 'indicators',
   )
 
+  const usesMultiProjectSelection = computed(
+    () =>
+      workspaceContext.value === 'indicators'
+      || activeWorkspaceNav.value === 'indicators'
+      || activeWorkspaceNav.value === 'ranking'
+      || activeWorkspaceNav.value === 'constructor',
+  )
+
   const activeProjectSelectionVariant = computed(() =>
     getEffectiveProjectSelectionVariant(
       projectWorkspaceCardsVariant.value,
-      isIndicatorsWorkspace.value,
+      usesMultiProjectSelection.value,
     ),
   )
 
@@ -72,12 +207,17 @@ export function createDashboardState() {
   function selectAllProjects() {
     selectedProjectIds.value = new Set(allProjectIds())
     selectedProjectId.value = null
+    persistAlternativeProjectSelection()
   }
 
   function toggleSelectAllProjects() {
+    if (isConstructorWorkspace.value && isConstructorScenarioLocked.value) {
+      return
+    }
     if (indicatorsAllProjectsSelected.value) {
       selectedProjectIds.value = new Set()
       selectedProjectId.value = null
+      persistAlternativeProjectSelection()
       return
     }
     selectAllProjects()
@@ -89,6 +229,9 @@ export function createDashboardState() {
   }
 
   function toggleIndicatorProject(id: string) {
+    if (isConstructorWorkspace.value && isConstructorScenarioLocked.value) {
+      return
+    }
     const next = new Set(selectedProjectIds.value)
     if (next.has(id)) {
       next.delete(id)
@@ -97,10 +240,11 @@ export function createDashboardState() {
     }
     selectedProjectIds.value = next
     selectedProjectId.value = next.size === 1 ? [...next][0]! : null
+    persistAlternativeProjectSelection()
   }
 
   function isProjectSelected(id: string) {
-    if (workspaceContext.value === 'indicators') {
+    if (usesMultiProjectSelection.value) {
       return selectedProjectIds.value.has(id)
     }
     return selectedProjectId.value === id
@@ -142,6 +286,28 @@ export function createDashboardState() {
     activeWorkspaceNav.value = 'projects'
   }
 
+  function openRankingWorkspace() {
+    workspaceContext.value = 'projects'
+    projectWorkspaceOpen.value = true
+    activeWorkspaceNav.value = 'ranking'
+    activeProjectTab.value = 'overview'
+    if (selectedProjectIds.value.size === 0) {
+      selectAllProjects()
+    }
+  }
+
+  function openConstructorWorkspace() {
+    workspaceContext.value = 'projects'
+    projectWorkspaceOpen.value = true
+    activeWorkspaceNav.value = 'constructor'
+    activeProjectTab.value = 'overview'
+    if (selectedProjectIds.value.size === 0) {
+      selectAllProjects()
+    }
+    constructorActiveScenarioId.value = 'base'
+    snapshotConstructorProjectBaseline()
+  }
+
   function openProject(id: string) {
     workspaceContext.value = 'projects'
     projectWorkspaceOpen.value = true
@@ -151,7 +317,7 @@ export function createDashboardState() {
   }
 
   function selectProjectCard(id: string) {
-    if (workspaceContext.value === 'indicators') {
+    if (usesMultiProjectSelection.value) {
       toggleIndicatorProject(id)
       return
     }
@@ -167,12 +333,30 @@ export function createDashboardState() {
 
   function setActiveWorkspaceNav(navId: ProjectWorkspaceNavId) {
     activeWorkspaceNav.value = navId
+    projectWorkspaceOpen.value = true
 
     if (navId === 'indicators') {
       workspaceContext.value = 'indicators'
       if (selectedProjectIds.value.size === 0) {
         selectAllProjects()
       }
+      return
+    }
+
+    if (navId === 'ranking') {
+      workspaceContext.value = 'projects'
+      if (selectedProjectIds.value.size === 0) {
+        selectAllProjects()
+      }
+      return
+    }
+
+    if (navId === 'constructor') {
+      workspaceContext.value = 'projects'
+      if (selectedProjectIds.value.size === 0 && constructorActiveScenarioId.value === 'base') {
+        selectAllProjects()
+      }
+      snapshotConstructorProjectBaseline()
       return
     }
 
@@ -200,6 +384,7 @@ export function createDashboardState() {
     selectedProjectId,
     selectedProjectIds,
     isIndicatorsWorkspace,
+    usesMultiProjectSelection,
     activeProjectSelectionVariant,
     selectedProjectsCount,
     indicatorsAllProjectsSelected,
@@ -211,6 +396,8 @@ export function createDashboardState() {
     openIndicatorsWorkspace,
     openProject,
     openProjectWorkspace,
+    openRankingWorkspace,
+    openConstructorWorkspace,
     selectProjectCard,
     selectProject,
     closeProjectWorkspace,
@@ -223,6 +410,18 @@ export function createDashboardState() {
     openUiVariantsModal,
     closeUiVariantsModal,
     projectWorkspaceCardsVariant,
+    constructorProjectsVariant,
+    constructorProjectsSelectionChanged,
+    resetConstructorProjectsToBaseline,
+    constructorActiveScenarioId,
+    constructorScenarios,
+    constructorAlternativeCreated,
+    canCreateConstructorScenario,
+    isConstructorScenarioLocked,
+    selectConstructorScenario,
+    createConstructorAlternativeScenario,
+    deleteConstructorScenario,
+    isConstructorWorkspace,
     sidebarOpen,
     kpiLoading,
     meta: dashboardMeta,

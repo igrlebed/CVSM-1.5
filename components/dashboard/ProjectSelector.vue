@@ -4,10 +4,10 @@ import { useDashboardState } from '~/composables/useDashboardState'
 
 const {
   activeProjectSelectionVariant,
-  workspaceContext,
   selectedProjectId,
   selectedProjectIds,
   selectedProjectsCount,
+  usesMultiProjectSelection,
   indicatorsAllProjectsSelected,
   selectProject,
   toggleSelectAllProjects,
@@ -25,17 +25,15 @@ const selectedIndex = computed(() =>
   projects.findIndex((p) => p.id === selectedProjectId.value),
 )
 
-const isIndicatorsMode = computed(() => workspaceContext.value === 'indicators')
-
 const stepperLabel = computed(() => {
-  if (isIndicatorsMode.value && indicatorsAllProjectsSelected.value) {
+  if (usesMultiProjectSelection.value && indicatorsAllProjectsSelected.value) {
     return 'Все проекты'
   }
   return selectedProject.value?.title ?? 'Выберите проект'
 })
 
 const stepperCounter = computed(() => {
-  if (isIndicatorsMode.value && indicatorsAllProjectsSelected.value) {
+  if (usesMultiProjectSelection.value && indicatorsAllProjectsSelected.value) {
     return `${projects.length} / ${projects.length}`
   }
   if (selectedIndex.value < 0) return `— / ${projects.length}`
@@ -54,7 +52,7 @@ const allProjectsCheckState = computed(() => {
 })
 
 const dropdownTriggerLabel = computed(() => {
-  if (isIndicatorsMode.value) {
+  if (usesMultiProjectSelection.value) {
     if (indicatorsAllProjectsSelected.value) {
       return 'Все проекты'
     }
@@ -68,13 +66,13 @@ const dropdownTriggerLabel = computed(() => {
 
 const showSelectionCountBadge = computed(
   () =>
-    isIndicatorsMode.value
+    usesMultiProjectSelection.value
     && selectedProjectsCount.value > 0
     && !indicatorsAllProjectsSelected.value,
 )
 
 function isMenuItemActive(projectId: string) {
-  if (isIndicatorsMode.value) {
+  if (usesMultiProjectSelection.value) {
     return selectedProjectIds.value.has(projectId)
   }
   return selectedProjectId.value === projectId
@@ -101,7 +99,7 @@ const STEPPER_CONTROLS_WIDTH = 36 + 6 + 36
 const STEPPER_TITLE_FONT = '500 20px Onest, system-ui, sans-serif'
 const STEPPER_COUNTER_FONT = '400 14px Onest, system-ui, sans-serif'
 
-const DROPDOWN_LABEL_FONT = '500 16px Onest, system-ui, sans-serif'
+const DROPDOWN_LABEL_FONT = '400 16px Onest, system-ui, sans-serif'
 const DROPDOWN_BADGE_FONT = '700 12px Onest, system-ui, sans-serif'
 const DROPDOWN_TRIGGER_GAP = 12
 const DROPDOWN_TRIGGER_PADDING_X = 32
@@ -178,7 +176,7 @@ const dropdownLayout = computed(() => {
   const triggerOnlyWidth =
     labelWidth + DROPDOWN_TRIGGER_GAP + DROPDOWN_CHEVRON_WIDTH + DROPDOWN_TRIGGER_PADDING_X
 
-  const withCheckbox = isIndicatorsMode.value
+  const withCheckbox = usesMultiProjectSelection.value
   const maxMenuWidth = Math.max(
     dropdownAllProjectsRowWidth(withCheckbox),
     0,
@@ -238,7 +236,7 @@ const stepperBlockStyle = computed(() => ({
 }))
 
 function stepPrev() {
-  if (isIndicatorsMode.value && indicatorsAllProjectsSelected.value) {
+  if (usesMultiProjectSelection.value && indicatorsAllProjectsSelected.value) {
     if (projects[projects.length - 1]) {
       selectProject(projects[projects.length - 1]!.id)
     }
@@ -249,7 +247,7 @@ function stepPrev() {
 }
 
 function stepNext() {
-  if (isIndicatorsMode.value && indicatorsAllProjectsSelected.value) {
+  if (usesMultiProjectSelection.value && indicatorsAllProjectsSelected.value) {
     if (projects[0]) selectProject(projects[0].id)
     return
   }
@@ -262,7 +260,7 @@ function stepNext() {
 }
 
 function pickProject(id: string) {
-  if (isIndicatorsMode.value) {
+  if (usesMultiProjectSelection.value) {
     toggleIndicatorProject(id)
     return
   }
@@ -295,7 +293,7 @@ watch(activeProjectSelectionVariant, () => {
   dropdownOpen.value = false
 })
 
-watch(isIndicatorsMode, () => {
+watch(usesMultiProjectSelection, () => {
   uiMeasureRevision.value += 1
 })
 
@@ -351,44 +349,64 @@ onUnmounted(() => {
       <span class="project-selector__trigger-inset neo-button-inset" aria-hidden="true" />
     </button>
 
-    <div v-if="dropdownOpen" class="project-selector__menu">
-      <div
-        class="project-selector__menu-scroll neo-scroll"
-        role="listbox"
-        :aria-multiselectable="isIndicatorsMode || undefined"
-        :aria-label="isIndicatorsMode ? 'Список проектов (множественный выбор)' : 'Список проектов'"
-      >
+    <div class="project-selector__menu-wrap">
+      <UiNeoCollapse :open="dropdownOpen">
+        <div class="project-selector__menu neo-dropdown-panel">
+          <div class="project-selector__menu-viewport neo-scroll-viewport">
+            <div
+              class="project-selector__menu-scroll neo-scroll"
+              role="listbox"
+              :aria-multiselectable="usesMultiProjectSelection || undefined"
+              :aria-label="usesMultiProjectSelection ? 'Список проектов (множественный выбор)' : 'Список проектов'"
+            >
         <button
-          v-if="isIndicatorsMode"
+          v-if="usesMultiProjectSelection"
           type="button"
           role="option"
-          class="project-selector__menu-item"
+          class="project-selector__menu-item neo-select-pill neo-interactive neo-button"
+          :class="{ 'neo-select-pill--selected': allProjectsCheckState.checked }"
           :aria-selected="allProjectsCheckState.checked"
           @click="pickAllProjects"
         >
+          <span class="neo-select-pill__bg" aria-hidden="true" />
           <DashboardProjectMultiSelectCheck
             :checked="allProjectsCheckState.checked"
             :indeterminate="allProjectsCheckState.indeterminate"
           />
-          <span class="project-selector__menu-title">Все проекты</span>
+          <span class="project-selector__menu-title neo-select-pill__title">Все проекты</span>
+          <span class="neo-select-pill__inset" aria-hidden="true" />
         </button>
         <button
           v-for="project in projects"
           :key="project.id"
           type="button"
           role="option"
-          class="project-selector__menu-item"
+          class="project-selector__menu-item neo-select-pill neo-interactive neo-button"
+          :class="{ 'neo-select-pill--selected': isMenuItemActive(project.id) }"
           :aria-selected="isMenuItemActive(project.id)"
           @click="pickProject(project.id)"
         >
+          <span class="neo-select-pill__bg" aria-hidden="true" />
           <DashboardProjectMultiSelectCheck
-            v-if="isIndicatorsMode"
+            v-if="usesMultiProjectSelection"
             :checked="isMenuItemActive(project.id)"
           />
           <DashboardProjectBadge :type="project.type" />
-          <span class="project-selector__menu-title">{{ project.title }}</span>
+          <span class="project-selector__menu-title neo-select-pill__title">{{ project.title }}</span>
+          <span class="neo-select-pill__inset" aria-hidden="true" />
         </button>
-      </div>
+            </div>
+            <span
+              class="neo-scroll-fade neo-scroll-fade--top project-selector__menu-fade project-selector__menu-fade--top"
+              aria-hidden="true"
+            />
+            <span
+              class="neo-scroll-fade neo-scroll-fade--bottom project-selector__menu-fade project-selector__menu-fade--bottom"
+              aria-hidden="true"
+            />
+          </div>
+        </div>
+      </UiNeoCollapse>
     </div>
     </div>
 
@@ -471,7 +489,7 @@ onUnmounted(() => {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 10px;
+  gap: var(--gap-sm);
 }
 
 .project-selector__combo-stepper {
@@ -491,13 +509,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: var(--gap-md);
   width: 100%;
   box-sizing: border-box;
   height: 46px;
   padding: 0 16px;
   border-radius: var(--radius-2xl);
-  border-color: var(--border-secondary);
   overflow: hidden;
   cursor: pointer;
   text-align: left;
@@ -539,37 +556,45 @@ onUnmounted(() => {
   position: relative;
   z-index: 1;
   flex-shrink: 0;
-  margin-left: 12px;
+  margin-left: var(--gap-md);
   color: var(--text-primary);
 }
 
-.project-selector__menu {
+.project-selector__menu-wrap {
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
   z-index: 20;
   width: max(100%, max-content);
   min-width: 100%;
-  border: 1px solid var(--border-secondary);
+}
+
+.project-selector__menu {
+  width: 100%;
   border-radius: var(--radius-xl);
-  background: var(--island-inner);
-  box-shadow: var(--shadow-modal-outer);
-  overflow: hidden;
 }
 
 .project-selector__menu-scroll {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--gap-sm);
   width: max-content;
   min-width: 100%;
-  max-height: 280px;
-  padding: 8px;
+  max-height: var(--project-selector-menu-max-height);
+  padding: var(--gap-2xl) var(--gap-xs);
   box-sizing: border-box;
   overflow-x: auto;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
+}
+
+.project-selector__menu-fade--top {
+  border-radius: calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px) 0 0;
+}
+
+.project-selector__menu-fade--bottom {
+  border-radius: 0 0 calc(var(--radius-xl) - 1px) calc(var(--radius-xl) - 1px);
 }
 
 .project-selector__trigger-count {
@@ -581,7 +606,7 @@ onUnmounted(() => {
   justify-content: center;
   min-width: 22px;
   height: 22px;
-  padding: 0 6px;
+  padding: 0 var(--gap-2xs);
   border-radius: var(--radius-pill, 999px);
   background: var(--accent-muted-300);
   font: 500 14px/16px var(--font-family);
@@ -589,35 +614,45 @@ onUnmounted(() => {
 }
 
 .project-selector__menu-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--gap-md);
   width: 100%;
-  padding: 10px 12px;
-  border: none;
-  border-radius: var(--radius-md);
+  height: 44px;
+  min-height: 44px;
+  padding: 0 var(--gap-md);
+  border-radius: var(--radius-lg);
   background: transparent;
   cursor: pointer;
   text-align: left;
   white-space: nowrap;
-}
-
-.project-selector__menu-item:hover {
-  background: rgb(78 91 166 / 14%);
+  isolation: isolate;
 }
 
 .project-selector__menu-title {
-  flex-shrink: 0;
-  font: var(--text-md-medium);
-  color: var(--text-primary);
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  font: var(--text-md-regular);
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.project-selector__menu-item :deep(.project-badge),
+.project-selector__menu-item :deep(.project-multi-check) {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
 }
 
 .project-selector--stepper {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 10px;
+  gap: var(--gap-sm);
   box-sizing: border-box;
 }
 
@@ -625,7 +660,7 @@ onUnmounted(() => {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 6px;
+  gap: var(--gap-2xs);
 }
 
 .project-selector__step {
@@ -638,7 +673,6 @@ onUnmounted(() => {
   height: 36px;
   padding: 0;
   border-radius: var(--radius-lg);
-  border-color: var(--border-secondary);
   overflow: hidden;
   cursor: pointer;
   background: transparent;
@@ -661,7 +695,7 @@ onUnmounted(() => {
   display: flex;
   flex-shrink: 0;
   align-items: baseline;
-  gap: 10px;
+  gap: var(--gap-sm);
   box-sizing: border-box;
 }
 

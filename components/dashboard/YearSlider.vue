@@ -10,7 +10,26 @@ const fillPercent = computed(() => {
   return ((modelYear.value - min) / (max - min)) * 100
 })
 
-const thumbLeft = computed(() => `calc(${fillPercent.value}% - 14px)`)
+const thumbHalf = 14
+
+const thumbLeft = computed(() => `calc(${fillPercent.value}% - ${thumbHalf}px)`)
+
+function yearLabelStyle(index: number) {
+  const lastIndex = timelineYears.length - 1
+  if (lastIndex <= 0) {
+    return { left: '0', transform: 'none' }
+  }
+  if (index === 0) {
+    return { left: '0', transform: 'none' }
+  }
+  if (index === lastIndex) {
+    return { left: '100%', transform: 'translateX(-100%)' }
+  }
+  return {
+    left: `${(index / lastIndex) * 100}%`,
+    transform: 'translateX(-50%)',
+  }
+}
 
 function isActiveYear(year: number) {
   const min = timelineYears[0]
@@ -52,10 +71,11 @@ function isActiveYear(year: number) {
       </div>
       <div class="year-slider__labels" aria-hidden="true">
         <span
-          v-for="year in timelineYears"
+          v-for="(year, index) in timelineYears"
           :key="year"
           class="year-slider__year"
           :class="{ 'year-slider__year--active': isActiveYear(year) }"
+          :style="yearLabelStyle(index)"
         >
           {{ year }}
         </span>
@@ -99,7 +119,7 @@ function isActiveYear(year: number) {
   inset: 0;
   border-radius: inherit;
   background: var(--background-primary);
-  border: 1px solid var(--border-secondary);
+  border: var(--border-width) solid var(--border-stroke-inner);
 }
 
 .year-slider__track-line-inset {
@@ -128,7 +148,7 @@ function isActiveYear(year: number) {
   height: 28px;
   border-radius: 50%;
   background: var(--island-external);
-  border: 1.17px solid var(--accent-muted-100);
+  border: 1.17px solid var(--border-active);
   box-shadow:
     -5px 5px 10px 0 rgba(228, 228, 228, 0.2),
     5px -5px 10px 0 rgba(228, 228, 228, 0.2),
@@ -153,18 +173,16 @@ function isActiveYear(year: number) {
 }
 
 .year-slider__labels {
-  display: flex;
-  justify-content: space-between;
-  gap: 0;
+  position: relative;
+  height: 16px;
   font: var(--text-xs-regular);
   line-height: 16px;
 }
 
 .year-slider__year {
-  flex: 1 1 0;
-  min-width: 0;
+  position: absolute;
   color: var(--text-muted);
-  text-align: center;
+  white-space: nowrap;
   transition: color var(--transition-fast);
 }
 
@@ -186,7 +204,7 @@ function isActiveYear(year: number) {
 
 .year-slider__track:has(.year-slider__input:hover) .year-slider__thumb,
 .year-slider__track:has(.year-slider__input:focus-visible) .year-slider__thumb {
-  border-color: var(--accent-muted);
+  border-color: var(--border-hover);
 }
 
 .year-slider__track:has(.year-slider__input:focus-visible) .year-slider__thumb {

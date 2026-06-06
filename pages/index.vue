@@ -12,7 +12,7 @@ function closeSidebar() {
 <template>
   <DashboardProjectWorkspace v-if="projectWorkspaceOpen" />
   <div v-else class="desktop-main">
-    <DashboardHeader />
+    <DashboardHeader :logo-interactive="false" />
     <section class="desktop-main__kpi" aria-label="Ключевые показатели">
       <DashboardKpiCard
         v-for="(item, index) in kpiItems"
@@ -122,7 +122,7 @@ function closeSidebar() {
     position: fixed;
     inset: 0;
     z-index: 4;
-    background: rgba(28, 58, 115, 0.25);
+    background: var(--overlay-backdrop);
   }
 
   .desktop-main :deep(.sidebar) {

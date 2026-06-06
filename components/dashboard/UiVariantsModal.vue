@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import {
+  constructorProjectsVariantOptions,
   getEffectiveProjectSelectionVariant,
-  isVariantAllowedForIndicators,
+  isVariantAllowedForMultiSelect,
   projectWorkspaceCardsVariantOptions,
+  type ConstructorProjectsVariant,
   type ProjectWorkspaceCardsVariant,
 } from '~/mocks/uiVariants'
 import { useDashboardState } from '~/composables/useDashboardState'
@@ -11,35 +13,78 @@ const {
   uiVariantsOpen,
   closeUiVariantsModal,
   projectWorkspaceCardsVariant,
-  isIndicatorsWorkspace,
+  constructorProjectsVariant,
+  isConstructorWorkspace,
+  usesMultiProjectSelection,
 } = useDashboardState()
 
-const displayedVariant = computed(() =>
+const displayedWorkspaceVariant = computed(() =>
   getEffectiveProjectSelectionVariant(
     projectWorkspaceCardsVariant.value,
-    isIndicatorsWorkspace.value,
+    usesMultiProjectSelection.value,
   ),
 )
 
-function optionDescription(option: (typeof projectWorkspaceCardsVariantOptions)[number]) {
-  if (isIndicatorsWorkspace.value && option.id === 'dropdown') {
+const modalOptions = computed(() =>
+  isConstructorWorkspace.value
+    ? constructorProjectsVariantOptions
+    : projectWorkspaceCardsVariantOptions,
+)
+
+const displayedVariant = computed(() =>
+  isConstructorWorkspace.value
+    ? constructorProjectsVariant.value
+    : displayedWorkspaceVariant.value,
+)
+
+function isMultiSelectRestricted(
+  option: { disabledForMultiSelect?: boolean; disabledForIndicators?: boolean },
+) {
+  return !!(option.disabledForMultiSelect ?? option.disabledForIndicators)
+}
+
+function workspaceOptionDescription(
+  option: (typeof projectWorkspaceCardsVariantOptions)[number],
+) {
+  if (usesMultiProjectSelection.value && option.id === 'dropdown') {
     return 'Множественный выбор проектов в списке с чекбоксами'
   }
-  if (isIndicatorsWorkspace.value && option.disabledForIndicators) {
-    return 'Недоступно на экране показателей'
+  if (usesMultiProjectSelection.value && isMultiSelectRestricted(option)) {
+    return 'Недоступно при мультивыборе проектов'
   }
   return option.description
 }
 
-function isOptionDisabled(option: (typeof projectWorkspaceCardsVariantOptions)[number]) {
-  return isIndicatorsWorkspace.value && !!option.disabledForIndicators
+function optionDescription(option: { id: string; description?: string }) {
+  if (isConstructorWorkspace.value) {
+    return option.description
+  }
+  return workspaceOptionDescription(
+    option as (typeof projectWorkspaceCardsVariantOptions)[number],
+  )
 }
 
-function pickVariant(id: ProjectWorkspaceCardsVariant) {
-  if (!isVariantAllowedForIndicators(id) && isIndicatorsWorkspace.value) {
+function isOptionDisabled(option: { id: string; disabledForMultiSelect?: boolean }) {
+  if (isConstructorWorkspace.value) {
+    return false
+  }
+  return (
+    usesMultiProjectSelection.value
+    && isMultiSelectRestricted(option)
+  )
+}
+
+function pickVariant(id: string) {
+  if (isConstructorWorkspace.value) {
+    constructorProjectsVariant.value = id as ConstructorProjectsVariant
     return
   }
-  projectWorkspaceCardsVariant.value = id
+
+  const workspaceVariant = id as ProjectWorkspaceCardsVariant
+  if (!isVariantAllowedForMultiSelect(workspaceVariant) && usesMultiProjectSelection.value) {
+    return
+  }
+  projectWorkspaceCardsVariant.value = workspaceVariant
 }
 
 function onOverlayClick(event: MouseEvent) {
@@ -99,28 +144,33 @@ onUnmounted(() => {
               </DashboardIconButton>
             </header>
 
-            <p v-if="isIndicatorsWorkspace" class="ui-variants-modal__note">
-              На экране показателей переключатель и комбо-вариант недоступны — при их выборе в
-              проектах здесь используется горизонтальный скролл.
+            <p v-if="isConstructorWorkspace" class="ui-variants-modal__note">
+              Вариант блока «Управление проектами» в конструкторе.
+            </p>
+            <p v-else-if="usesMultiProjectSelection" class="ui-variants-modal__note">
+              На экранах показателей и ранжирования переключатель и комбо-вариант недоступны —
+              при их выборе в проектах здесь используется горизонтальный скролл.
             </p>
 
             <div
               class="ui-variants-modal__options"
               role="radiogroup"
               :aria-label="
-                isIndicatorsWorkspace
-                  ? 'Выбор варианта отображения проектов на показателях'
-                  : 'Выбор варианта отображения карточек'
+                isConstructorWorkspace
+                  ? 'Выбор варианта блока управления проектами'
+                  : usesMultiProjectSelection
+                    ? 'Выбор варианта отображения проектов при мультивыборе'
+                    : 'Выбор варианта отображения карточек'
               "
             >
               <button
-                v-for="option in projectWorkspaceCardsVariantOptions"
+                v-for="option in modalOptions"
                 :key="option.id"
                 type="button"
                 role="radio"
-                class="ui-variants-option neo-interactive neo-button"
+                class="ui-variants-option neo-select-pill neo-interactive neo-button"
                 :class="{
-                  'ui-variants-option--active': displayedVariant === option.id,
+                  'neo-select-pill--selected': displayedVariant === option.id,
                   'ui-variants-option--disabled': isOptionDisabled(option),
                 }"
                 :aria-checked="displayedVariant === option.id"
@@ -128,14 +178,14 @@ onUnmounted(() => {
                 :disabled="isOptionDisabled(option)"
                 @click="pickVariant(option.id)"
               >
-                <span class="ui-variants-option__bg" aria-hidden="true" />
-                <span class="ui-variants-option__text">
-                  <span class="ui-variants-option__label">{{ option.label }}</span>
+                <span class="neo-select-pill__bg" aria-hidden="true" />
+                <span class="ui-variants-option__text neo-select-pill__content">
+                  <span class="ui-variants-option__label neo-select-pill__title">{{ option.label }}</span>
                   <span v-if="optionDescription(option)" class="ui-variants-option__desc">
                     {{ optionDescription(option) }}
                   </span>
                 </span>
-                <span class="ui-variants-option__inset neo-button-inset" aria-hidden="true" />
+                <span class="neo-select-pill__inset" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -156,7 +206,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: rgb(13 23 76 / 40%);
+  background: var(--overlay-backdrop);
   backdrop-filter: blur(2px);
 }
 
@@ -214,7 +264,6 @@ onUnmounted(() => {
   width: 100%;
   padding: 14px 16px;
   border-radius: var(--radius-2xl);
-  border-color: var(--border-primary);
   overflow: hidden;
   cursor: pointer;
   text-align: left;
@@ -224,35 +273,6 @@ onUnmounted(() => {
 .ui-variants-option--disabled {
   opacity: 0.45;
   cursor: not-allowed;
-  pointer-events: none;
-}
-
-.ui-variants-option--active {
-  border-color: var(--accent-muted-100);
-}
-
-.ui-variants-option--active .ui-variants-option__bg {
-  background: var(--accent-muted-300);
-}
-
-.ui-variants-option--active .ui-variants-option__inset {
-  box-shadow: var(--shadow-inner-deep);
-}
-
-.ui-variants-option__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: var(--background-primary);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.ui-variants-option__inset {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
   pointer-events: none;
 }
 
@@ -266,7 +286,6 @@ onUnmounted(() => {
 
 .ui-variants-option__label {
   font: var(--text-md-medium);
-  color: var(--text-primary);
 }
 
 .ui-variants-option__desc {

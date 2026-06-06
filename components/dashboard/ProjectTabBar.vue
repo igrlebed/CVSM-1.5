@@ -31,6 +31,7 @@ function isGrowTab(index: number) {
       class="project-tab-bar__item neo-interactive neo-button"
       :class="{
         'project-tab-bar__item--active': modelValue === tab.id,
+        'neo-button--active': modelValue === tab.id,
         'project-tab-bar__item--grow': isGrowTab(index),
       }"
       :aria-selected="modelValue === tab.id"
@@ -51,7 +52,7 @@ function isGrowTab(index: number) {
   width: 100%;
   padding: 6px;
   flex-shrink: 0;
-  border: 1px solid var(--border-secondary);
+  border: var(--border-width) solid var(--border-stroke-inner);
   border-radius: var(--radius-3xl);
   background: var(--island-external);
   box-shadow: var(--shadow-inset-soft);
@@ -66,7 +67,6 @@ function isGrowTab(index: number) {
   justify-content: center;
   padding: 8px 14px;
   border-radius: var(--radius-2xl);
-  border-color: var(--border-secondary);
   box-shadow: var(--shadow-tab-bar-chip);
   overflow: hidden;
   flex-shrink: 0;
@@ -113,7 +113,6 @@ function isGrowTab(index: number) {
 }
 
 .project-tab-bar__item:not(.project-tab-bar__item--active).neo-interactive:hover:not(:disabled).neo-button {
-  border-color: var(--accent-muted-100);
   box-shadow: var(--shadow-tab-bar-chip-hover);
   transform: none;
 }
@@ -124,7 +123,6 @@ function isGrowTab(index: number) {
 }
 
 .project-tab-bar__item--active {
-  border-color: var(--accent-muted-100);
   box-shadow: var(--shadow-inset-soft);
   transform: none;
 }
@@ -139,7 +137,6 @@ function isGrowTab(index: number) {
 
 .project-tab-bar__item--active.neo-interactive:hover:not(:disabled).neo-button,
 .project-tab-bar__item--active.neo-interactive:active:not(:disabled).neo-button {
-  border-color: var(--accent-muted-100);
   box-shadow: var(--shadow-inset-soft);
   transform: none;
 }

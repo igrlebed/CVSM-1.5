@@ -5,19 +5,28 @@ import { useDashboardState } from '~/composables/useDashboardState'
 const open = defineModel<boolean>({ required: true })
 
 const {
-  workspaceContext,
   selectedProjectId,
   selectedProjectIds,
-  indicatorsAllProjectsSelected,
+  selectedProjectsCount,
+  usesMultiProjectSelection,
   selectProject,
   toggleSelectAllProjects,
   toggleIndicatorProject,
 } = useDashboardState()
 
-const isIndicatorsMode = computed(() => workspaceContext.value === 'indicators')
+const allProjectsCheckState = computed(() => {
+  const count = selectedProjectsCount.value
+  if (count === 0) {
+    return { checked: false, indeterminate: false }
+  }
+  if (count === projects.length) {
+    return { checked: true, indeterminate: false }
+  }
+  return { checked: false, indeterminate: true }
+})
 
 function isDrawerItemActive(projectId: string) {
-  if (isIndicatorsMode.value) {
+  if (usesMultiProjectSelection.value) {
     return selectedProjectIds.value.has(projectId)
   }
   return selectedProjectId.value === projectId
@@ -28,7 +37,7 @@ function close() {
 }
 
 function pickProject(id: string) {
-  if (isIndicatorsMode.value) {
+  if (usesMultiProjectSelection.value) {
     toggleIndicatorProject(id)
     return
   }
@@ -81,36 +90,53 @@ onUnmounted(() => {
           </DashboardIconButton>
         </header>
 
-        <nav class="project-drawer__list neo-scroll" role="listbox" aria-label="Список проектов">
+        <nav
+          class="project-drawer__list neo-scroll"
+          role="listbox"
+          :aria-multiselectable="usesMultiProjectSelection || undefined"
+          :aria-label="usesMultiProjectSelection ? 'Список проектов (множественный выбор)' : 'Список проектов'"
+        >
           <button
-            v-if="isIndicatorsMode"
+            v-if="usesMultiProjectSelection"
             type="button"
             role="option"
-            class="project-drawer__item neo-interactive neo-button"
-            :class="{ 'project-drawer__item--active': indicatorsAllProjectsSelected }"
-            :aria-selected="indicatorsAllProjectsSelected"
+            class="project-drawer__item neo-select-pill neo-interactive neo-button"
+            :class="{ 'neo-select-pill--selected': allProjectsCheckState.checked }"
+            :aria-selected="allProjectsCheckState.checked"
             @click="pickAllProjects"
           >
-            <span class="project-drawer__item-bg" aria-hidden="true" />
-            <span class="project-drawer__item-inset neo-button-inset" aria-hidden="true" />
-            <span class="project-drawer__item-title">Все проекты</span>
+            <span class="neo-select-pill__bg" aria-hidden="true" />
+            <DashboardProjectMultiSelectCheck
+              class="project-drawer__item-check"
+              :checked="allProjectsCheckState.checked"
+              :indeterminate="allProjectsCheckState.indeterminate"
+            />
+            <span class="project-drawer__item-title neo-select-pill__title">Все проекты</span>
+            <span class="neo-select-pill__inset" aria-hidden="true" />
           </button>
           <button
             v-for="project in projects"
             :key="project.id"
             type="button"
             role="option"
-            class="project-drawer__item neo-interactive neo-button"
-            :class="{ 'project-drawer__item--active': isDrawerItemActive(project.id) }"
+            class="project-drawer__item neo-select-pill neo-interactive neo-button"
+            :class="{
+              'neo-select-pill--selected': isDrawerItemActive(project.id),
+            }"
             :aria-selected="isDrawerItemActive(project.id)"
             @click="pickProject(project.id)"
           >
-            <span class="project-drawer__item-bg" aria-hidden="true" />
-            <span class="project-drawer__item-inset neo-button-inset" aria-hidden="true" />
+            <span class="neo-select-pill__bg" aria-hidden="true" />
+            <DashboardProjectMultiSelectCheck
+              v-if="usesMultiProjectSelection"
+              class="project-drawer__item-check"
+              :checked="isDrawerItemActive(project.id)"
+            />
             <span class="project-drawer__item-leading">
               <DashboardProjectBadge :type="project.type" />
             </span>
-            <span class="project-drawer__item-title">{{ project.title }}</span>
+            <span class="project-drawer__item-title neo-select-pill__title">{{ project.title }}</span>
+            <span class="neo-select-pill__inset" aria-hidden="true" />
           </button>
         </nav>
       </aside>
@@ -123,7 +149,7 @@ onUnmounted(() => {
   position: fixed;
   inset: 0;
   z-index: 1100;
-  background: rgb(13 23 76 / 40%);
+  background: var(--overlay-backdrop);
   backdrop-filter: blur(2px);
 }
 
@@ -173,7 +199,7 @@ onUnmounted(() => {
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
   min-height: 0;
   overflow-y: auto;
 }
@@ -182,58 +208,32 @@ onUnmounted(() => {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--gap-md);
   width: 100%;
-  padding: 12px 14px;
-  border-radius: var(--radius-xl);
-  border-color: var(--border-secondary);
-  overflow: hidden;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 var(--gap-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   text-align: left;
   background: transparent;
+  isolation: isolate;
 }
 
-.project-drawer__item-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: var(--island-external);
-  border-radius: inherit;
-  pointer-events: none;
+.project-drawer__item:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
-.project-drawer__item-inset {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.project-drawer__item--active {
-  border-color: var(--accent-muted-100);
-}
-
-.project-drawer__item--active .project-drawer__item-bg {
-  background: var(--accent-muted-300);
-}
-
-.project-drawer__item--active .project-drawer__item-inset {
-  box-shadow: var(--shadow-inner-deep);
-}
-
-.project-drawer__item:hover:not(:disabled) .project-drawer__item-bg {
-  background: rgb(78 91 166 / 14%);
-}
-
-.project-drawer__item--active:hover:not(:disabled) .project-drawer__item-bg {
-  background: rgb(78 91 166 / 18%);
-}
-
+.project-drawer__item-check,
 .project-drawer__item-leading,
 .project-drawer__item-title {
   position: relative;
   z-index: 1;
+}
+
+.project-drawer__item-check {
+  flex-shrink: 0;
 }
 
 .project-drawer__item-leading {
@@ -244,7 +244,9 @@ onUnmounted(() => {
 .project-drawer__item-title {
   flex: 1;
   min-width: 0;
-  font: var(--text-md-medium);
-  color: var(--text-primary);
+  font: var(--text-md-regular);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

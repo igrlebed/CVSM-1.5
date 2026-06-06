@@ -4,12 +4,20 @@ import type { SidebarInfoSection } from '~/mocks/dashboard'
 defineProps<{
   section: SidebarInfoSection
 }>()
+
+const emit = defineEmits<{
+  action: []
+}>()
 </script>
 
 <template>
   <div class="accordion-info-panel">
     <p class="accordion-info-panel__text">{{ section.description }}</p>
-    <DashboardPrimaryButton :label="section.buttonLabel" size="md" />
+    <DashboardPrimaryButton
+      :label="section.buttonLabel"
+      size="md"
+      @click="emit('action')"
+    />
   </div>
 </template>
 

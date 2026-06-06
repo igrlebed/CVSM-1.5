@@ -6,26 +6,40 @@ export type ProjectWorkspaceCardsVariant =
   | 'drawer'
   | 'dropdownStepper'
 
-/** На экране показателей недоступны — подставляется scroll */
-export const indicatorsForbiddenVariants: ProjectWorkspaceCardsVariant[] = [
+/** Блок «Управление проектами» в конструкторе */
+export type ConstructorProjectsVariant = 'grid' | 'drawer'
+
+export const constructorDefaultVariant: ConstructorProjectsVariant = 'grid'
+
+/** На экранах с мультивыбором (показатели, ранжирование) недоступны — подставляется scroll */
+export const multiSelectForbiddenVariants: ProjectWorkspaceCardsVariant[] = [
   'stepper',
   'dropdownStepper',
 ]
 
-export const indicatorsDefaultVariant: ProjectWorkspaceCardsVariant = 'scroll'
+export const multiSelectDefaultVariant: ProjectWorkspaceCardsVariant = 'scroll'
 
-export function isVariantAllowedForIndicators(
+/** @deprecated используйте multiSelectForbiddenVariants */
+export const indicatorsForbiddenVariants = multiSelectForbiddenVariants
+
+/** @deprecated используйте multiSelectDefaultVariant */
+export const indicatorsDefaultVariant = multiSelectDefaultVariant
+
+export function isVariantAllowedForMultiSelect(
   variant: ProjectWorkspaceCardsVariant,
 ): boolean {
-  return !indicatorsForbiddenVariants.includes(variant)
+  return !multiSelectForbiddenVariants.includes(variant)
 }
+
+/** @deprecated используйте isVariantAllowedForMultiSelect */
+export const isVariantAllowedForIndicators = isVariantAllowedForMultiSelect
 
 export function getEffectiveProjectSelectionVariant(
   variant: ProjectWorkspaceCardsVariant,
-  forIndicators: boolean,
+  forMultiSelect: boolean,
 ): ProjectWorkspaceCardsVariant {
-  if (forIndicators && indicatorsForbiddenVariants.includes(variant)) {
-    return indicatorsDefaultVariant
+  if (forMultiSelect && multiSelectForbiddenVariants.includes(variant)) {
+    return multiSelectDefaultVariant
   }
   return variant
 }
@@ -34,9 +48,25 @@ export interface UiVariantOption<T extends string = string> {
   id: T
   label: string
   description?: string
-  /** Нельзя выбрать на экране «Показатели» */
+  /** Нельзя выбрать при мультивыборе (показатели, ранжирование) */
+  disabledForMultiSelect?: boolean
+  /** @deprecated используйте disabledForMultiSelect */
   disabledForIndicators?: boolean
 }
+
+export const constructorProjectsVariantOptions: UiVariantOption<ConstructorProjectsVariant>[] =
+  [
+    {
+      id: 'grid',
+      label: 'Сетка',
+      description: 'Две колонки, все карточки в блоке',
+    },
+    {
+      id: 'drawer',
+      label: 'Дровер',
+      description: 'Кнопка «Добавить проект» открывает панель, в блоке — выбранные',
+    },
+  ]
 
 export const projectWorkspaceCardsVariantOptions: UiVariantOption<ProjectWorkspaceCardsVariant>[] =
   [
@@ -59,17 +89,17 @@ export const projectWorkspaceCardsVariantOptions: UiVariantOption<ProjectWorkspa
       id: 'stepper',
       label: 'Переключатель',
       description: 'Предыдущий и следующий проект стрелками у названия',
-      disabledForIndicators: true,
+      disabledForMultiSelect: true,
     },
     {
       id: 'drawer',
-      label: 'Сайдвер',
+      label: 'Дровер',
       description: 'Кнопка «Выбрать проект» у названия открывает панель справа',
     },
     {
       id: 'dropdownStepper',
       label: 'Список и переключатель',
       description: 'Выпадающий список и стрелки вперёд / назад справа от него',
-      disabledForIndicators: true,
+      disabledForMultiSelect: true,
     },
   ]

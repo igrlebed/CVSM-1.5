@@ -13,7 +13,12 @@
 - `pages/index.vue` — главный экран «Desktop — Main»
 - `pages/ui-kit.vue` — витрина компонентов
 - `components/dashboard/` — UI дашборда
-- `components/ui/NeoSurface.vue` — оболочка неоморфных слоёв
+- `components/ui/NeoSurface.vue` — оболочка неоморфных слоёв (острова)
+- `components/ui/NeoButtonShell.vue` — оболочка кнопок (`default` | `accent` | `sidebar`)
+- `components/ui/NeoSwitch.vue` — toggle на токенах
+- `components/dashboard/WorkspaceSectionHeader.vue` — заголовок секций workspace
+- `components/dashboard/ConstructorWorkspace.vue` — экран конструктора (сценарий + гант)
+- `mocks/constructor.ts` — сценарий, расписания ганта
 - `composables/useDashboardState.ts` — общее состояние экрана
 - `plugins/dashboard-state.ts` — provide состояния
 - `assets/css/tokens.css` — дизайн-токены и тени

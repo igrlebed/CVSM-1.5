@@ -5,6 +5,7 @@ import {
   indicatorItems,
   projects,
   rankingSection,
+  referenceSection,
   sidebarSections,
 } from '~/mocks/dashboard'
 import { useDashboardState } from '~/composables/useDashboardState'
@@ -13,8 +14,9 @@ defineProps<{
   id?: string
 }>()
 
-const { sidebarOpen, openIndicatorFromSidebar } = useDashboardState()
-const openId = ref<SidebarSectionId | null>('projects')
+const { sidebarOpen, openIndicatorFromSidebar, openRankingWorkspace, openConstructorWorkspace } =
+  useDashboardState()
+const openId = ref<SidebarSectionId | null>(null)
 
 function toggle(id: SidebarSectionId) {
   openId.value = openId.value === id ? null : id
@@ -23,8 +25,24 @@ function toggle(id: SidebarSectionId) {
   }
 }
 
+function onInfoAction(id: SidebarSectionId) {
+  if (id === 'ranking') {
+    openRankingWorkspace()
+  }
+  if (id === 'constructor') {
+    openConstructorWorkspace()
+  }
+}
+
 function infoSection(id: SidebarSectionId) {
-  return id === 'ranking' ? rankingSection : constructorSection
+  switch (id) {
+    case 'ranking':
+      return rankingSection
+    case 'reference':
+      return referenceSection
+    default:
+      return constructorSection
+  }
 }
 </script>
 
@@ -44,25 +62,40 @@ function infoSection(id: SidebarSectionId) {
       @toggle="toggle(section.id)"
     >
       <template v-if="section.type === 'projects'">
-        <div class="sidebar-projects-scroll neo-scroll" role="list">
-          <DashboardProjectListButton
-            v-for="project in projects"
-            :key="project.id"
-            :project="project"
-            role="listitem"
+        <div class="sidebar-projects-viewport neo-scroll-viewport">
+          <div class="sidebar-projects-scroll neo-scroll">
+            <div class="sidebar-projects-list" role="list">
+              <DashboardProjectListButton
+                v-for="project in projects"
+                :key="project.id"
+                :project="project"
+                role="listitem"
+              />
+            </div>
+          </div>
+          <span
+            class="neo-scroll-fade neo-scroll-fade--bottom sidebar-projects-fade"
+            aria-hidden="true"
           />
         </div>
       </template>
       <template v-else-if="section.type === 'indicators'">
-        <DashboardAccordionTextButton
-          v-for="item in indicatorItems"
-          :key="item"
-          :label="item"
-          @click="openIndicatorFromSidebar(item)"
-        />
+        <div class="sidebar-section-content sidebar-section-content--indicators">
+          <DashboardAccordionTextButton
+            v-for="item in indicatorItems"
+            :key="item"
+            :label="item"
+            @click="openIndicatorFromSidebar(item)"
+          />
+        </div>
       </template>
       <template v-else>
-        <DashboardAccordionInfoPanel :section="infoSection(section.id)" />
+        <div class="sidebar-section-content sidebar-section-content--info">
+          <DashboardAccordionInfoPanel
+            :section="infoSection(section.id)"
+            @action="onInfoAction(section.id)"
+          />
+        </div>
       </template>
     </DashboardAccordionItem>
   </aside>
@@ -74,38 +107,72 @@ function infoSection(id: SidebarSectionId) {
   flex-direction: column;
   gap: 8px;
   width: var(--sidebar-width);
+  max-width: var(--sidebar-width);
   flex-shrink: 0;
   align-self: stretch;
   min-height: 0;
 }
 
 .sidebar :deep(.accordion-item) {
+  width: 100%;
+  max-width: 100%;
   flex-shrink: 0;
 }
 
 .sidebar :deep(.accordion-item--projects.accordion-item--open) {
   flex: 1 1 0;
   min-height: 0;
-  overflow: hidden;
 }
 
-.sidebar-projects-scroll {
+.sidebar-projects-viewport {
+  position: relative;
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
-  gap: 10px;
+  min-height: 0;
+}
+
+.sidebar-projects-scroll {
+  flex: 1 1 0;
   height: 0;
   min-height: 0;
-  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
   -webkit-overflow-scrolling: touch;
 }
 
-.sidebar-projects-scroll :deep(.project-list-button) {
+.sidebar-projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+  /* Figma 3764:22214 — body px 8px + запас под fade */
+  padding: 0 8px 24px;
+}
+
+.sidebar-projects-fade {
+  --scroll-fade-color: var(--background-primary);
+  border-radius: 0 0 calc(var(--radius-3xl) - 1px) calc(var(--radius-3xl) - 1px);
+}
+
+.sidebar-projects-list :deep(.project-list-button) {
   flex-shrink: 0;
   min-height: 44px;
   height: 44px;
+}
+
+.sidebar-section-content--indicators {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  padding: 0 var(--gap-xs) var(--gap-md);
+}
+
+.sidebar-section-content--info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+  padding: 0 var(--gap-lg) var(--gap-2xl);
+  align-items: center;
 }
 </style>

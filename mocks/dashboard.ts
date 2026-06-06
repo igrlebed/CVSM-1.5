@@ -77,7 +77,7 @@ export const projects: DashboardProject[] = [
   { id: '19', title: 'Новосибирск – Барнаул', type: 'sm' },
 ]
 
-export type SidebarSectionId = 'projects' | 'indicators' | 'constructor' | 'ranking'
+export type SidebarSectionId = 'projects' | 'indicators' | 'constructor' | 'ranking' | 'reference'
 export type SidebarSectionType = 'projects' | 'indicators' | 'info'
 
 export interface SidebarInfoSection {
@@ -94,6 +94,7 @@ export const sidebarSections: Array<{
   { id: 'indicators', title: 'Показатели', type: 'indicators' },
   { id: 'constructor', title: 'Конструктор', type: 'info' },
   { id: 'ranking', title: 'Ранжирование', type: 'info' },
+  { id: 'reference', title: 'Справочная информация', type: 'info' },
 ]
 
 export const projectDetailTabs = [
@@ -137,6 +138,11 @@ export const constructorSection: SidebarInfoSection = {
 export const rankingSection: SidebarInfoSection = {
   description: 'Приоритизация проектов с учетом параметров реализации и эффектов',
   buttonLabel: 'Перейти к ранжированию',
+}
+
+export const referenceSection: SidebarInfoSection = {
+  description: 'Сведения по проектам для оценки параметров реализации и ожидаемых эффектов',
+  buttonLabel: 'Перейти',
 }
 
 export const mapLegendRows: LegendItem[] = [

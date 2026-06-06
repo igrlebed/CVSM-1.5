@@ -35,15 +35,14 @@ const panelId = useId()
     </button>
     <div
       :id="panelId"
-      class="accordion-item__panel"
-      :class="{ 'accordion-item__panel--open': open }"
+      class="accordion-item__panel neo-collapse"
+      :class="{ 'accordion-item__panel--open': open, 'neo-collapse--open': open }"
       :aria-hidden="!open"
     >
-      <div
-        class="accordion-item__body"
-        :class="{ 'accordion-item__body--projects': type === 'projects' }"
-      >
-        <slot />
+      <div class="accordion-item__panel-inner neo-collapse__body">
+        <div class="accordion-item__body">
+          <slot />
+        </div>
       </div>
     </div>
     <span class="accordion-item__inset" aria-hidden="true" />
@@ -53,12 +52,15 @@ const panelId = useId()
 <style scoped>
 .accordion-item {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  border: 1px solid var(--border-primary);
+  border: var(--border-width) solid var(--border-stroke);
   border-radius: var(--radius-3xl);
   overflow: hidden;
   isolation: isolate;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .accordion-item__bg {
@@ -78,7 +80,7 @@ const panelId = useId()
 }
 
 .accordion-item--collapsed {
-  box-shadow: var(--shadow-outer);
+  box-shadow: var(--shadow-outer-sidebar);
 }
 
 .accordion-item--open {
@@ -86,11 +88,7 @@ const panelId = useId()
 }
 
 .accordion-item--open.accordion-item--info {
-  box-shadow:
-    -2px 2px 4px 0 rgba(245, 245, 245, 0.2),
-    2px -2px 4px 0 rgba(245, 245, 245, 0.2),
-    -2px -2px 4px 0 rgba(255, 255, 255, 0.9),
-    2px 2px 5px 0 rgba(245, 245, 245, 0.9);
+  box-shadow: var(--shadow-accordion-info-outer);
 }
 
 .accordion-item__inset {
@@ -102,20 +100,11 @@ const panelId = useId()
 }
 
 .accordion-item--collapsed .accordion-item__inset {
-  box-shadow: var(--shadow-inset-soft);
+  box-shadow: var(--shadow-inset-soft-sidebar);
 }
 
-.accordion-item--open.accordion-item--projects .accordion-item__inset {
-  box-shadow:
-    inset -2px 2px 4px 0 rgba(245, 245, 245, 0.2),
-    inset 2px -2px 4px 0 rgba(245, 245, 245, 0.2),
-    inset -2px -2px 4px 0 rgba(255, 255, 255, 0.9),
-    inset 2px 2px 5px 0 rgba(245, 245, 245, 0.9);
-}
-
-.accordion-item--open.accordion-item--indicators .accordion-item__inset,
-.accordion-item--open.accordion-item--info .accordion-item__inset {
-  box-shadow: var(--shadow-inset-soft);
+.accordion-item--open .accordion-item__inset {
+  box-shadow: var(--shadow-accordion-open-inset);
 }
 
 .accordion-item__headline {
@@ -124,20 +113,23 @@ const panelId = useId()
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--gap-md);
   width: 100%;
-  padding: 12px 20px;
+  padding: var(--gap-md) var(--gap-2xl);
   border: none;
   background: transparent;
   font: var(--text-md-medium);
   color: var(--text-primary);
   cursor: pointer;
   text-align: left;
+  overflow: hidden;
+  border-radius: inherit;
   transition: padding var(--transition-base);
 }
 
 .accordion-item--open .accordion-item__headline {
-  padding: 16px 20px;
+  padding: var(--gap-lg) var(--gap-2xl);
+  border-radius: calc(var(--radius-3xl) - 1px) calc(var(--radius-3xl) - 1px) 0 0;
 }
 
 .accordion-item__title {
@@ -151,80 +143,40 @@ const panelId = useId()
 .accordion-item__panel {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows var(--transition-base);
-}
-
-.accordion-item__panel--open {
-  grid-template-rows: 1fr;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .accordion-item__panel {
-    transition: none;
-  }
-
-  .accordion-item__body {
-    transition: none;
-  }
+  min-height: 0;
 }
 
 .accordion-item__body {
-  overflow: hidden;
-  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 0 8px 0;
-  opacity: 0;
-  transition:
-    opacity var(--transition-fast),
-    padding var(--transition-base);
+  min-height: 0;
+  padding: 0;
+  gap: 0;
 }
 
 .accordion-item__panel--open .accordion-item__body {
-  padding: 0 8px 12px;
-  opacity: 1;
-}
-
-.accordion-item--indicators .accordion-item__body,
-.accordion-item--info .accordion-item__body {
-  gap: 16px;
-  padding: 0 16px 0;
-  align-items: center;
-}
-
-.accordion-item--indicators .accordion-item__panel--open .accordion-item__body,
-.accordion-item--info .accordion-item__panel--open .accordion-item__body {
-  padding: 0 16px 24px;
+  padding-top: var(--gap-sm);
 }
 
 .accordion-item--projects.accordion-item--open {
   flex: 1 1 0;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
-/* grid 1fr + min-height:0 схлопывает контент — для проектов flex-колонка */
 .accordion-item--projects.accordion-item--open .accordion-item__panel {
-  display: flex;
   flex: 1 1 0;
-  flex-direction: column;
   min-height: 0;
-  overflow: hidden;
-  grid-template-rows: unset;
-  transition: none;
 }
 
-.accordion-item--projects.accordion-item--open .accordion-item__body--projects {
+.accordion-item--projects.accordion-item--open .accordion-item__panel-inner {
   display: flex;
-  flex: 1 1 0;
   flex-direction: column;
   min-height: 0;
-  overflow: hidden;
-  gap: 0;
+  height: 100%;
+}
+
+.accordion-item--projects.accordion-item--open .accordion-item__body {
+  flex: 1 1 0;
+  min-height: 0;
 }
 </style>

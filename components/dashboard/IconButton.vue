@@ -6,6 +6,7 @@ withDefaults(
     size?: 'header' | 'nav'
     iconSrc?: string
     disabled?: boolean
+    ariaPressed?: boolean
   }>(),
   {
     size: 'header',
@@ -15,14 +16,14 @@ withDefaults(
 </script>
 
 <template>
-  <button
-    type="button"
-    class="icon-button neo-interactive neo-button"
+  <UiNeoButtonShell
+    variant="default"
+    class="icon-button"
     :class="`icon-button--${size}`"
-    :aria-label="label"
     :disabled="disabled"
+    :aria-label="label"
+    :aria-pressed="ariaPressed"
   >
-    <span class="icon-button__bg" aria-hidden="true" />
     <span class="icon-button__icon">
       <slot>
         <img
@@ -34,58 +35,35 @@ withDefaults(
         />
       </slot>
     </span>
-    <span class="icon-button__inset neo-button-inset" aria-hidden="true" />
-  </button>
+  </UiNeoButtonShell>
 </template>
 
 <style scoped>
 .icon-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-  cursor: pointer;
-  background: transparent;
+  justify-content: center;
+}
+
+.icon-button :deep(.neo-button-shell__content) {
+  justify-content: center;
+  align-items: center;
 }
 
 .icon-button--header {
   width: 44px;
   height: 32px;
-  padding: 8px;
+  padding: var(--gap-xs);
   border-radius: 14px;
 }
 
 .icon-button--nav {
   width: 46px;
   height: 46px;
-  padding: 12px;
+  padding: var(--gap-md);
   border-radius: var(--radius-xl);
-  border-color: var(--border-secondary);
-}
-
-.icon-button__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: var(--island-external);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.icon-button__inset {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  border-radius: inherit;
-  pointer-events: none;
 }
 
 .icon-button__icon {
-  position: relative;
-  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,11 +91,5 @@ withDefaults(
   display: block;
   width: 20px;
   height: 20px;
-}
-
-.icon-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 </style>

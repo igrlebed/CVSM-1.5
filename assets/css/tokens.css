@@ -7,8 +7,20 @@
   --island-external: #f5f5f5;
   --island-inner: #fafafa;
   --background-primary: #f9f9f9;
-  --border-primary: #d5d7da;
-  --border-secondary: #e9eaeb;
+  /* Обводки — единая точка настройки (эталон: главный экран) */
+  --border-width: 1px;
+  --border-stroke: #d5d7da;
+  --border-stroke-inner: #e9eaeb;
+  --border-stroke-hover: #9ea5d1;
+  --border-stroke-active: #c8cce5;
+  --border-stroke-accent: #9ea5d1;
+  --border-stroke-switch-off: #b8beca;
+  --border-stroke-switch-off-hover: #a8aebb;
+  --border-primary: var(--border-stroke);
+  --border-secondary: var(--border-stroke-inner);
+  --border-active: var(--border-stroke-active);
+  --border-hover: var(--border-stroke-hover);
+  --border-accent: var(--border-stroke-accent);
   --accent-primary: #4e5ba6;
   --accent-muted: #9ea5d1;
   --accent-muted-100: #c8cce5;
@@ -19,12 +31,41 @@
   --project-vsm-minsk: #fedf89;
   --project-sm: #6172f3;
   --project-msk-spb: #12b76a;
+  --gantt-pir: #84caff;
+  --gantt-smr: #bdb4fe;
+  --gantt-commissioning: #6fd195;
+  --gantt-track-border: #e9eaeb;
+  --gantt-track-inset: 9px;
+  --gantt-timeline-end-gutter: 28px;
+  --gantt-label-width: 348px;
+  --gantt-column-gap: 16px;
+  --gantt-bar-radius: 12px;
+  --gantt-bar-chip-bg: color-mix(in srgb, var(--background-primary) 60%, transparent);
+  --gantt-bar-height: 24px;
+  --gantt-label-indent: 40px;
+  --gantt-label-indent-deep: 68px;
+  --gantt-track-radius: 24px;
+  --constructor-scenario-width: 320px;
+  --constructor-scenario-body-gap: var(--gap-md);
+  --constructor-scenario-body-padding-bottom: var(--gap-xl);
+  --constructor-scenario-head-padding: var(--gap-2xl) var(--gap-lg) var(--gap-md);
+  --constructor-projects-grid-columns: 3;
+  --constructor-empty-min-height: 280px;
+  --constructor-empty-text-max-width: 280px;
+  --constructor-project-card-min-height: 72px;
+  --constructor-project-card-min-height-compact: 56px;
+  --kpi-card-height-sm: 104px;
+  --workspace-pill-height: 40px;
+  --gap-kpi-constructor: var(--gap-md);
+  --constructor-gantt-min-height: 100%;
   --focus-ring: #4e5ba6;
   --font-family: 'Onest', system-ui, sans-serif;
   --text-2xl-medium: 500 36px/40px var(--font-family);
+  --text-kpi-value-sm: 500 28px/32px var(--font-family);
   --text-xl-medium: 500 20px/24px var(--font-family);
   --text-md-medium: 500 16px/20px var(--font-family);
   --text-md-regular: 400 16px/20px var(--font-family);
+  --text-sm-medium: 500 14px/16px var(--font-family);
   --text-sm-regular: 400 14px/16px var(--font-family);
   --text-xs-regular: 400 12px/16px var(--font-family);
   --text-xs-bold: 700 12px/12px var(--font-family);
@@ -37,18 +78,69 @@
   --radius-4xl: 36px;
   --radius-5xl: 40px;
   --accent-muted-300: #f8f9fc;
-  --gap-page: 8px;
-  --gap-section: 20px;
-  --gap-kpi: 12px;
-  --shell-gap: 4px;
+  /* Spacing scale */
+  --gap-3xs: 4px;
+  --gap-2xs: 6px;
+  --gap-xs: 8px;
+  --gap-sm: 10px;
+  --gap-md: 12px;
+  --gap-lg: 16px;
+  --gap-xl: 20px;
+  --gap-2xl: 24px;
+  --gap-page: var(--gap-xs);
+  --gap-section: var(--gap-xl);
+  --gap-kpi: var(--gap-md);
+  --gap-workspace: var(--gap-lg);
+  --shell-gap: 2px;
+  /* Figma guides: отступ заголовка секции (headline px 20) */
+  --workspace-guide-inset: var(--gap-xl);
+  /* Подзаголовок над neo-shell: shell-gap + внутренний отступ контента */
+  --workspace-shell-head-inset: calc(var(--shell-gap) + var(--gap-xs));
+  /* Подзаголовок ганта («Проекты»): cell x 12 в макете 3931:32702 */
+  --gantt-subhead-inset: var(--gap-md);
+  --workspace-section-head-height-compact: 84px;
+  --workspace-section-head-height: 88px;
+  --workspace-section-head-padding: var(--workspace-guide-inset);
+  --workspace-section-head-padding-block: 32px;
+  --overlay-backdrop: rgb(13 23 76 / 40%);
+  --headline-hover-bg: rgb(200 204 229 / 12%);
+  /* NeoSwitch — Figma toggle */
+  --switch-width: 38px;
+  --switch-height: 20px;
+  --switch-thumb-size: 14px;
+  --switch-thumb-offset: 3px;
+  --switch-thumb-travel: 18px;
+  --switch-track-off: #c8ccd6;
+  --switch-track-off-hover: #b8beca;
+  --switch-track-off-border: var(--border-stroke-switch-off);
+  --switch-track-off-border-hover: var(--border-stroke-switch-off-hover);
+  --switch-spring: cubic-bezier(0.34, 1.15, 0.64, 1);
+  --switch-duration: 0.38s;
+  --shadow-switch-track-off-inset: inset 0 1px 2px 0 rgb(101 101 101 / 12%);
+  --shadow-switch-track-off-inset-hover: inset 0 1px 3px 0 rgb(101 101 101 / 18%);
+  --shadow-switch-track-on: 0 1px 2px 0 rgb(94 109 199 / 12%);
+  --shadow-switch-track-on-hover: 0 2px 6px 0 rgb(94 109 199 / 22%);
+  --shadow-switch-track-on-inset: inset 1px 1px 3px 0 rgb(62 73 133 / 18%);
+  --shadow-switch-thumb:
+    0 1px 2px 0 rgb(101 101 101 / 16%), inset 0.5px 0.5px 1px 0 rgb(255 255 255 / 55%);
+  --shadow-switch-thumb-hover:
+    0 3px 6px 0 rgb(101 101 101 / 24%), inset 0.5px 0.5px 1px 0 rgb(255 255 255 / 75%);
+  --bp-xs: 640px;
   --bp-sm: 1024px;
   --bp-md: 1280px;
   --sidebar-width: 360px;
+  --project-selector-menu-max-height: 480px;
+  --scroll-fade-height: 36px;
   --transition-fast: 150ms ease;
   --transition-base: 220ms ease;
   --shadow-outer: -5px 5px 10px 0 rgba(240, 240, 240, 0.2),
     5px -5px 10px 0 rgba(240, 240, 240, 0.2), -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
     5px 5px 13px 0 rgba(240, 240, 240, 0.9);
+  --shadow-outer-hover: -6px 6px 12px 0 rgba(228, 228, 228, 0.28),
+    6px -6px 12px 0 rgba(228, 228, 228, 0.28), -6px -6px 12px 0 rgba(255, 255, 255, 0.95),
+    6px 6px 16px 0 rgba(228, 228, 228, 0.95);
+  --shadow-inset-hover: inset 2px 2px 5px 0 rgba(255, 255, 255, 0.4),
+    inset -2px -2px 5px 0 rgba(228, 228, 228, 0.6);
   --shadow-modal-outer: -5px 5px 10px 0 rgba(240, 240, 240, 0.12),
     5px -5px 10px 0 rgba(240, 240, 240, 0.12), -5px -5px 10px 0 rgba(255, 255, 255, 0.28),
     5px 5px 13px 0 rgba(240, 240, 240, 0.32);
@@ -60,6 +152,14 @@
     inset -1px -1px 2px 0 rgba(240, 240, 240, 0.5);
   --shadow-inset-soft-sidebar: inset 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
     inset -1px -1px 2px 0 rgba(228, 228, 228, 0.5);
+  /* Figma 3764:22210 / 3764:22222 — accordion Open */
+  --shadow-accordion-open-inset: inset -2px 2px 4px 0 rgba(245, 245, 245, 0.2),
+    inset 2px -2px 4px 0 rgba(245, 245, 245, 0.2), inset -2px -2px 4px 0 rgba(255, 255, 255, 0.9),
+    inset 2px 2px 5px 0 rgba(245, 245, 245, 0.9);
+  /* Figma 3764:22233 — accordion Open info */
+  --shadow-accordion-info-outer: -2px 2px 4px 0 rgba(245, 245, 245, 0.2),
+    2px -2px 4px 0 rgba(245, 245, 245, 0.2), -2px -2px 4px 0 rgba(255, 255, 255, 0.9),
+    2px 2px 5px 0 rgba(245, 245, 245, 0.9);
   --shadow-inner-raised: 1px 1px 2px 0 rgba(255, 255, 255, 0.3),
     -1px -1px 2px 0 rgba(245, 245, 245, 0.5);
   --shadow-inner-deep: inset -5px 5px 10px 0 rgba(245, 245, 245, 0.2),
@@ -76,10 +176,12 @@
   --shadow-tab-item-pressed: inset -5px 5px 10px 0 rgba(211, 212, 214, 0.2),
     inset 5px -5px 10px 0 rgba(211, 212, 214, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
     inset 5px 5px 13px 0 rgba(211, 212, 214, 0.9);
-  /* Figma 3785:28623 — ProjectCard Active */
-  --shadow-project-card-pressed: inset -5px 5px 10px 0 rgba(196, 196, 196, 0.2),
-    inset 5px -5px 10px 0 rgba(196, 196, 196, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
-    inset 5px 5px 13px 0 rgba(196, 196, 196, 0.9);
+  /* Фон элементов выбора (neo-select-pill) — белый во всех состояниях */
+  --select-pill-surface: #ffffff;
+  /* Единое вдавливание для всех элементов выбора */
+  --shadow-select-pressed: inset -4px 4px 8px 0 rgba(196, 196, 196, 0.14),
+    inset 4px -4px 8px 0 rgba(196, 196, 196, 0.14), inset -4px -4px 8px 0 rgba(255, 255, 255, 0.55),
+    inset 4px 4px 10px 0 rgba(196, 196, 196, 0.32);
   --shadow-track-inset: inset -5px 5px 10px 0 rgba(225, 225, 225, 0.2),
     inset 5px -5px 10px 0 rgba(225, 225, 225, 0.2), inset -5px -5px 10px 0 rgba(255, 255, 255, 0.9),
     inset 5px 5px 13px 0 rgba(225, 225, 225, 0.9);

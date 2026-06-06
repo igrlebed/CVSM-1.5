@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import type { KpiItem } from '~/mocks/dashboard'
 
-const props = defineProps<{
-  item: KpiItem
-  loading?: boolean
-}>()
+export type KpiCardSize = 'md' | 'sm'
+
+const props = withDefaults(
+  defineProps<{
+    item: KpiItem
+    loading?: boolean
+    size?: KpiCardSize
+  }>(),
+  {
+    loading: false,
+    size: 'md',
+  },
+)
 
 const labelText = computed(() => {
   const parts = [props.item.label, ...(props.item.labelLines ?? [])]
@@ -13,7 +22,10 @@ const labelText = computed(() => {
 </script>
 
 <template>
-  <article class="kpi-card neo-shell-outer">
+  <article
+    class="kpi-card neo-shell-outer"
+    :class="`kpi-card--${size}`"
+  >
     <span class="neo-shell-outer__bg" aria-hidden="true" />
     <div class="kpi-card__body neo-shell-inner">
       <span class="neo-shell-inner__bg" aria-hidden="true" />
@@ -24,7 +36,19 @@ const labelText = computed(() => {
             <span class="kpi-card__value">{{ item.value }}</span>
             <span v-if="item.suffix" class="kpi-card__suffix">{{ item.suffix }}</span>
           </div>
-          <p class="kpi-card__label" :title="labelText">{{ labelText }}</p>
+          <div
+            v-if="item.labelLines?.length"
+            class="kpi-card__label kpi-card__label--stacked"
+            :title="labelText"
+          >
+            <p>{{ item.label }}</p>
+            <p v-for="line in item.labelLines" :key="line">{{ line }}</p>
+          </div>
+          <p
+            v-else
+            class="kpi-card__label"
+            :title="item.label"
+          >{{ item.label }}</p>
         </template>
       </div>
       <span class="neo-shell-inner__inset" aria-hidden="true" />
@@ -98,5 +122,54 @@ const labelText = computed(() => {
   -webkit-line-clamp: 2;
   overflow: hidden;
   word-break: break-word;
+}
+
+.kpi-card__label--stacked {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.kpi-card__label--stacked p {
+  margin: 0;
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.kpi-card--sm {
+  height: var(--kpi-card-height-sm);
+  border-radius: var(--radius-3xl);
+}
+
+.kpi-card--sm .kpi-card__body {
+  border-radius: var(--radius-2xl);
+}
+
+.kpi-card--sm .kpi-card__content {
+  gap: var(--gap-2xs);
+  padding: 14px;
+}
+
+.kpi-card--sm .kpi-card__skeleton {
+  margin: var(--gap-md);
+  min-height: 40px;
+}
+
+.kpi-card--sm .kpi-card__value-row {
+  gap: var(--gap-xs);
+}
+
+.kpi-card--sm .kpi-card__value {
+  font: var(--text-kpi-value-sm);
+}
+
+.kpi-card--sm .kpi-card__suffix {
+  padding-bottom: 2px;
+  font: var(--text-md-medium);
+}
+
+.kpi-card--sm .kpi-card__label {
+  max-height: 32px;
 }
 </style>
