@@ -38,7 +38,6 @@ function toggle() {
       'neo-select-pill': true,
       'neo-select-pill--selected': selected,
       'neo-interactive': !readonly,
-      'neo-button': !readonly,
     }"
     :aria-pressed="readonly ? undefined : selected"
     @click="toggle"
@@ -73,14 +72,64 @@ function toggle() {
   width: 100%;
   min-height: var(--constructor-project-card-min-height);
   padding: var(--gap-md) var(--gap-xl);
+  margin: 0;
   border-radius: var(--radius-3xl);
   cursor: pointer;
   text-align: left;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  isolation: isolate;
+}
+
+.constructor-project-card:not(.constructor-project-card--readonly).neo-select-pill {
+  box-shadow: none;
+}
+
+.constructor-project-card.neo-select-pill--selected:not(.constructor-project-card--readonly) {
+  border-color: var(--border-active);
+  box-shadow: none;
+}
+
+.constructor-project-card.neo-interactive:hover:not(:disabled):not(.constructor-project-card--readonly),
+.constructor-project-card.neo-interactive:active:not(:disabled):not(.constructor-project-card--readonly) {
+  border-color: var(--border-hover);
+  box-shadow: none;
+  transform: none;
+}
+
+.constructor-project-card.neo-interactive:hover:not(:disabled):not(.neo-select-pill--selected)
+  .neo-select-pill__bg,
+.constructor-project-card.neo-interactive:active:not(:disabled):not(.neo-select-pill--selected)
+  .neo-select-pill__bg {
+  background: var(--island-inner);
+}
+
+.constructor-project-card.neo-select-pill--selected.neo-interactive:hover:not(:disabled) .neo-select-pill__bg,
+.constructor-project-card.neo-select-pill--selected.neo-interactive:active:not(:disabled) .neo-select-pill__bg {
+  background: var(--select-pill-surface);
+}
+
+.constructor-project-card.neo-interactive:hover:not(:disabled) .neo-select-pill__inset,
+.constructor-project-card.neo-interactive:active:not(:disabled) .neo-select-pill__inset {
+  box-shadow: var(--shadow-select-pressed);
+}
+
+.constructor-project-card:not(.neo-select-pill--selected).neo-interactive:hover:not(:disabled) .neo-select-pill__inset,
+.constructor-project-card:not(.neo-select-pill--selected).neo-interactive:active:not(:disabled) .neo-select-pill__inset {
+  box-shadow: none;
+}
+
+.constructor-project-card.neo-select-pill--selected.neo-interactive:hover:not(:disabled),
+.constructor-project-card.neo-select-pill--selected.neo-interactive:active:not(:disabled) {
+  border-color: var(--border-active);
+  box-shadow: none;
 }
 
 .constructor-project-card--readonly {
   cursor: default;
   pointer-events: none;
+  box-shadow: var(--shadow-outer);
 }
 
 .constructor-project-card--compact {
