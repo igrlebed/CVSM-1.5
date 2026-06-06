@@ -197,41 +197,39 @@ function carouselNext() {
       />
     </div>
 
-    <div class="project-cards-carousel__track">
-      <div
-        ref="viewportRef"
-        class="project-cards-carousel__viewport"
-        :class="{ 'project-cards-carousel__viewport--spread': carouselSpreadCards }"
-        role="list"
-      >
-        <DashboardProjectCard
-          v-for="index in visibleProjectIndices"
-          :key="projects[index]!.id"
-          :project="projects[index]!"
-          :selected="isProjectSelected(projects[index]!.id)"
-          role="listitem"
-          @select="selectProjectCard"
-        />
-      </div>
+    <UiNeoButtonShell
+      class="project-cards-carousel__nav project-cards-carousel__nav--prev"
+      aria-label="Предыдущие проекты"
+      :disabled="!canCarouselPrev"
+      @click="carouselPrev"
+    >
+      <DashboardChevronLeftIcon />
+    </UiNeoButtonShell>
 
-      <UiNeoButtonShell
-        class="project-cards-carousel__nav project-cards-carousel__nav--prev"
-        aria-label="Предыдущие проекты"
-        :disabled="!canCarouselPrev"
-        @click="carouselPrev"
-      >
-        <DashboardChevronLeftIcon />
-      </UiNeoButtonShell>
-
-      <UiNeoButtonShell
-        class="project-cards-carousel__nav project-cards-carousel__nav--next"
-        aria-label="Следующие проекты"
-        :disabled="!canCarouselNext"
-        @click="carouselNext"
-      >
-        <DashboardChevronRightIcon />
-      </UiNeoButtonShell>
+    <div
+      ref="viewportRef"
+      class="project-cards-carousel__viewport"
+      :class="{ 'project-cards-carousel__viewport--spread': carouselSpreadCards }"
+      role="list"
+    >
+      <DashboardProjectCard
+        v-for="index in visibleProjectIndices"
+        :key="projects[index]!.id"
+        :project="projects[index]!"
+        :selected="isProjectSelected(projects[index]!.id)"
+        role="listitem"
+        @select="selectProjectCard"
+      />
     </div>
+
+    <UiNeoButtonShell
+      class="project-cards-carousel__nav project-cards-carousel__nav--next"
+      aria-label="Следующие проекты"
+      :disabled="!canCarouselNext"
+      @click="carouselNext"
+    >
+      <DashboardChevronRightIcon />
+    </UiNeoButtonShell>
   </div>
 </template>
 
@@ -248,15 +246,15 @@ function carouselNext() {
 }
 
 .project-cards-panel--carousel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 46px 1fr 46px;
+  align-items: stretch;
+  gap: var(--gap-xs);
   width: 100%;
   box-sizing: border-box;
-  padding: 0 20px;
+  padding: 0 var(--gap-xl);
   flex-shrink: 0;
-}
-
-.project-cards-carousel__track {
-  position: relative;
-  width: 100%;
 }
 
 .project-cards-carousel__measure {
@@ -275,7 +273,7 @@ function carouselNext() {
   gap: var(--gap-xs);
   align-items: stretch;
   min-height: 108px;
-  padding: 0 54px;
+  min-width: 0;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -285,26 +283,13 @@ function carouselNext() {
 }
 
 .project-cards-carousel__nav {
-  position: absolute;
-  top: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  align-self: stretch;
   box-sizing: border-box;
   width: 46px;
-  height: 108px;
+  min-height: 108px;
   padding: 0;
   border-radius: var(--radius-xl);
   overflow: hidden;
-}
-
-.project-cards-carousel__nav--prev {
-  left: 0;
-}
-
-.project-cards-carousel__nav--next {
-  right: 0;
 }
 
 .project-cards-carousel__nav:disabled {
