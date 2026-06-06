@@ -27,9 +27,16 @@ const emit = defineEmits<{
   text-align: left;
 }
 
+.accordion-text-button :deep(.neo-button-shell__content) {
+  justify-content: flex-start;
+}
+
 .accordion-text-button__label {
+  flex: 1;
+  min-width: 0;
   font: var(--text-md-regular);
   color: var(--text-primary);
+  text-align: left;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

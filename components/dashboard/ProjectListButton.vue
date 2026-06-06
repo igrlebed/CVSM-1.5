@@ -34,6 +34,7 @@ const { openProject } = useDashboardState()
 
 .project-list-button :deep(.neo-button-shell__content) {
   gap: var(--gap-md);
+  justify-content: flex-start;
 }
 
 .project-list-button :deep(.project-badge) {
