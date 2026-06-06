@@ -19,11 +19,12 @@ const { toggleIndicatorProject } = useDashboardState()
 
 const rootTag = computed(() => (props.readonly ? 'article' : 'button'))
 
-function toggle() {
+function toggle(event: MouseEvent) {
   if (props.readonly) {
     return
   }
   toggleIndicatorProject(props.project.id)
+  ;(event.currentTarget as HTMLButtonElement).blur()
 }
 </script>
 

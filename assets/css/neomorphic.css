@@ -272,9 +272,18 @@
   box-shadow: var(--shadow-outer);
 }
 
+.neo-interactive:focus {
+  outline: none;
+}
+
 .neo-interactive:focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+.neo-select-pill.neo-interactive:focus-visible {
+  outline: none;
+  border-color: var(--focus-ring);
 }
 
 .neo-interactive:disabled {

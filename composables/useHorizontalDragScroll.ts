@@ -5,39 +5,47 @@ export function useHorizontalDragScroll() {
   const isDragging = ref(false)
 
   let pointerActive = false
-  let hasDragged = false
+  let suppressClick = false
   let startX = 0
   let startScrollLeft = 0
+  let activePointerId: number | null = null
 
   function onPointerDown(event: PointerEvent) {
     const el = containerRef.value
     if (!el || event.button !== 0 || event.pointerType !== 'mouse') return
 
     pointerActive = true
-    hasDragged = false
+    suppressClick = false
     isDragging.value = false
     startX = event.pageX
     startScrollLeft = el.scrollLeft
-    el.setPointerCapture(event.pointerId)
+    activePointerId = event.pointerId
   }
 
   function onPointerMove(event: PointerEvent) {
     const el = containerRef.value
-    if (!pointerActive || !el) return
+    if (!pointerActive || !el || event.pointerId !== activePointerId) return
 
     const deltaX = event.pageX - startX
-    if (!hasDragged && Math.abs(deltaX) <= DRAG_THRESHOLD_PX) return
+    if (!isDragging.value && Math.abs(deltaX) <= DRAG_THRESHOLD_PX) return
 
-    hasDragged = true
-    isDragging.value = true
+    if (!isDragging.value) {
+      isDragging.value = true
+      suppressClick = true
+      el.setPointerCapture(event.pointerId)
+    }
+
     el.scrollLeft = startScrollLeft - deltaX
     event.preventDefault()
   }
 
   function onPointerUp(event: PointerEvent) {
     const el = containerRef.value
+    if (!pointerActive || event.pointerId !== activePointerId) return
+
     pointerActive = false
     isDragging.value = false
+    activePointerId = null
 
     if (el?.hasPointerCapture(event.pointerId)) {
       el.releasePointerCapture(event.pointerId)
@@ -45,10 +53,10 @@ export function useHorizontalDragScroll() {
   }
 
   function onClickCapture(event: MouseEvent) {
-    if (!hasDragged) return
+    if (!suppressClick) return
     event.preventDefault()
     event.stopImmediatePropagation()
-    hasDragged = false
+    suppressClick = false
   }
 
   return {

@@ -260,7 +260,7 @@ function carouselNext() {
   padding-bottom: 4px;
   cursor: grab;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  touch-action: pan-x;
 }
 
 .project-cards-panel--scroll-dragging {
