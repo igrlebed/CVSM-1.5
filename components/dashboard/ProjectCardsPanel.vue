@@ -11,6 +11,15 @@ const {
   selectProjectCard,
 } = useDashboardState()
 
+const {
+  containerRef: scrollContainerRef,
+  isDragging: isScrollDragging,
+  onPointerDown: onScrollPointerDown,
+  onPointerMove: onScrollPointerMove,
+  onPointerUp: onScrollPointerUp,
+  onClickCapture: onScrollClickCapture,
+} = useHorizontalDragScroll()
+
 const viewportRef = ref<HTMLElement | null>(null)
 const viewportWidth = ref(0)
 const cardWidths = ref<number[]>(projects.map(() => CARD_MIN_WIDTH))
@@ -170,8 +179,15 @@ function carouselNext() {
 <template>
   <div
     v-if="activeProjectSelectionVariant === 'scroll'"
+    ref="scrollContainerRef"
     class="project-cards-panel project-cards-panel--scroll neo-scroll"
+    :class="{ 'project-cards-panel--scroll-dragging': isScrollDragging }"
     role="list"
+    @pointerdown="onScrollPointerDown"
+    @pointermove="onScrollPointerMove"
+    @pointerup="onScrollPointerUp"
+    @pointercancel="onScrollPointerUp"
+    @click.capture="onScrollClickCapture"
   >
     <DashboardProjectCard
       v-for="project in projects"
@@ -242,7 +258,18 @@ function carouselNext() {
   overflow-y: hidden;
   flex-shrink: 0;
   padding-bottom: 4px;
+  cursor: grab;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.project-cards-panel--scroll-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.project-cards-panel--scroll-dragging :deep(.project-card) {
+  pointer-events: none;
 }
 
 .project-cards-panel--carousel {

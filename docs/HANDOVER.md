@@ -56,4 +56,4 @@
 3. Обводки, gap, overlay, switch — только токены; выбор → `neo-select-pill--selected`.
 4. Данные экрана — `useDashboardState()`.
 5. Регрессия — `/` + `/ui-kit`, breakpoints 1280 / 1024 / 640; workspace: проекты, показатели, ранжирование, конструктор.
-6. Сброс подсказки логотипа: `Object.keys(localStorage).filter(k => k.startsWith('cvsm-logo-variant-hint-dismissed:')).forEach(k => localStorage.removeItem(k))`
+6. Сброс подсказки логотипа: `Object.keys(localStorage).filter(k => k.startsWith('cvsm-logo-variant-hint-dismissed')).forEach(k => localStorage.removeItem(k))` — подсказка только в workspace (кликабельный логотип), не на главной карте

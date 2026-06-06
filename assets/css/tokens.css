@@ -78,6 +78,8 @@
   --radius-4xl: 36px;
   --radius-5xl: 40px;
   --accent-muted-300: #f8f9fc;
+  --table-row-selected-bg: var(--accent-muted-300);
+  --table-row-hover-bg: rgb(200 204 229 / 14%);
   /* Spacing scale */
   --gap-3xs: 4px;
   --gap-2xs: 6px;

@@ -14,6 +14,31 @@ const { showHint, dismissHint, onLogoClick } = useLogoVariantHint(
   computed(() => props.logoInteractive),
   activeWorkspaceNav,
 )
+
+const logoBtnRef = ref<HTMLButtonElement | null>(null)
+const hintCoords = ref({ top: 0, left: 0 })
+
+function placeHint() {
+  const btn = logoBtnRef.value
+  if (!btn) return
+  const rect = btn.getBoundingClientRect()
+  hintCoords.value = {
+    top: rect.bottom + 8,
+    left: rect.left,
+  }
+}
+
+watch(showHint, async (visible) => {
+  if (!visible) return
+  await nextTick()
+  placeHint()
+})
+
+onMounted(() => {
+  if (showHint.value) {
+    placeHint()
+  }
+})
 </script>
 
 <template>
@@ -27,6 +52,7 @@ const { showHint, dismissHint, onLogoClick } = useLogoVariantHint(
           class="dashboard-header__logo-wrap"
         >
           <button
+            ref="logoBtnRef"
             type="button"
             class="dashboard-header__logo-btn neo-interactive"
             :class="{ 'dashboard-header__logo-btn--hint': showHint }"
@@ -42,23 +68,26 @@ const { showHint, dismissHint, onLogoClick } = useLogoVariantHint(
               height="24"
             />
           </button>
-          <div
-            v-if="showHint"
-            id="logo-variant-hint"
-            class="dashboard-header__logo-hint"
-            role="status"
-          >
-            <p class="dashboard-header__logo-hint-text">
-              Чтобы сменить вариант отображения, нажмите на логотип
-            </p>
-            <button
-              type="button"
-              class="dashboard-header__logo-hint-dismiss neo-interactive neo-interactive--flat"
-              @click="dismissHint"
+          <Teleport to="body">
+            <div
+              v-if="showHint"
+              id="logo-variant-hint"
+              class="dashboard-header__logo-hint"
+              role="status"
+              :style="{ top: `${hintCoords.top}px`, left: `${hintCoords.left}px` }"
             >
-              Понятно
-            </button>
-          </div>
+              <p class="dashboard-header__logo-hint-text">
+                Чтобы сменить вариант отображения, нажмите на логотип
+              </p>
+              <button
+                type="button"
+                class="dashboard-header__logo-hint-dismiss neo-interactive neo-interactive--flat"
+                @click="dismissHint"
+              >
+                Понятно
+              </button>
+            </div>
+          </Teleport>
         </div>
         <span v-else class="dashboard-header__logo-mark" aria-hidden="true">
           <img
@@ -81,7 +110,7 @@ const { showHint, dismissHint, onLogoClick } = useLogoVariantHint(
 <style scoped>
 .dashboard-header {
   position: relative;
-  z-index: 10;
+  z-index: 20;
   flex-shrink: 0;
   height: 56px;
   border-radius: var(--radius-lg);
@@ -141,10 +170,8 @@ const { showHint, dismissHint, onLogoClick } = useLogoVariantHint(
 }
 
 .dashboard-header__logo-hint {
-  position: absolute;
-  top: calc(100% + var(--gap-xs));
-  left: 0;
-  z-index: 40;
+  position: fixed;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   gap: var(--gap-sm);

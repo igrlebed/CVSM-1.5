@@ -444,3 +444,20 @@
   border-color: var(--accent-primary);
   background: var(--accent-primary);
 }
+
+/* Строки данных: лёгкая заливка при hover (оттенок выбранной строки) */
+.neo-data-table--body tbody tr:not(.neo-data-table__row--static):hover > :is(th, td) {
+  background: var(--table-row-hover-bg);
+}
+
+.neo-data-table--body tbody tr:not(.neo-data-table__row--static) > :is(th, td) {
+  transition: background var(--transition-fast);
+}
+
+.neo-data-table__grid-row {
+  transition: background var(--transition-fast);
+}
+
+.neo-data-table__grid-row:hover {
+  background: var(--table-row-hover-bg);
+}

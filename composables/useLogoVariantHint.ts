@@ -1,28 +1,24 @@
-const LOGO_VARIANT_HINT_KEY_PREFIX = 'cvsm-logo-variant-hint-dismissed:'
-
-function hintStorageKey(contextId: string) {
-  return `${LOGO_VARIANT_HINT_KEY_PREFIX}${contextId}`
-}
-
 export function useLogoVariantHint(
-  enabled: Ref<boolean> | boolean,
+  enabled: MaybeRefOrGetter<boolean>,
   contextId: Ref<string>,
 ) {
   const showHint = ref(false)
+  const dismissedContexts = ref<string[]>([])
 
-  function syncHintVisibility() {
-    if (!import.meta.client || !toValue(enabled)) {
+  function syncHint() {
+    if (!toValue(enabled)) {
       showHint.value = false
       return
     }
-    showHint.value = localStorage.getItem(hintStorageKey(contextId.value)) !== '1'
+    showHint.value = !dismissedContexts.value.includes(contextId.value)
   }
 
   function dismissHint() {
-    showHint.value = false
-    if (import.meta.client) {
-      localStorage.setItem(hintStorageKey(contextId.value), '1')
+    const id = contextId.value
+    if (!dismissedContexts.value.includes(id)) {
+      dismissedContexts.value = [...dismissedContexts.value, id]
     }
+    showHint.value = false
   }
 
   function onLogoClick(openModal: () => void) {
@@ -30,9 +26,10 @@ export function useLogoVariantHint(
     openModal()
   }
 
-  watch(contextId, syncHintVisibility)
-
-  onMounted(syncHintVisibility)
+  onMounted(() => {
+    syncHint()
+    watch([() => toValue(enabled), contextId], syncHint)
+  })
 
   return {
     showHint,

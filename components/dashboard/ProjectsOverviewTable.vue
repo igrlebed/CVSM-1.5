@@ -112,7 +112,7 @@ const { metricColWidth, projectColWidths, tableStyle, layoutStyle } =
             <div class="neo-shell-inner__content projects-overview__body-content">
               <div class="projects-overview__body-scroll neo-scroll">
               <table
-                class="projects-overview__table projects-overview__table--body"
+                class="projects-overview__table projects-overview__table--body neo-data-table--body"
                 :style="tableStyle"
               >
                 <colgroup>
@@ -144,14 +144,14 @@ const { metricColWidth, projectColWidths, tableStyle, layoutStyle } =
                         aria-hidden="true"
                       />
                     </tr>
-                    <tr class="projects-overview__group-panel-row">
+                    <tr class="projects-overview__group-panel-row neo-data-table__row--static">
                       <td
                         :colspan="projects.length + 1"
                         class="projects-overview__group-panel-cell"
                       >
                         <UiNeoCollapse :open="!!openGroups[group.id]">
                           <table
-                            class="projects-overview__table projects-overview__table--body projects-overview__table--group"
+                            class="projects-overview__table projects-overview__table--body projects-overview__table--group neo-data-table--body"
                             :style="tableStyle"
                           >
                             <colgroup>
@@ -373,6 +373,20 @@ const { metricColWidth, projectColWidths, tableStyle, layoutStyle } =
 
 .projects-overview__metric {
   background: var(--island-inner);
+  transition: background var(--transition-fast);
+}
+
+.projects-overview__cell,
+.projects-overview__group-head,
+.projects-overview__group-spacer {
+  transition: background var(--transition-fast);
+}
+
+.projects-overview__table--body tbody tr:not(.neo-data-table__row--static):hover .projects-overview__metric,
+.projects-overview__table--body tbody tr:not(.neo-data-table__row--static):hover .projects-overview__cell,
+.projects-overview__table--body tbody tr:not(.neo-data-table__row--static):hover .projects-overview__group-head,
+.projects-overview__table--body tbody tr:not(.neo-data-table__row--static):hover .projects-overview__group-spacer {
+  background: var(--table-row-hover-bg);
 }
 
 .projects-overview__metric-label {

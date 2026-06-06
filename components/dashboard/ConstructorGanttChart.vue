@@ -192,7 +192,7 @@ function periodLineStyle(period: GanttSegment['period']) {
               >
                 <template v-for="segment in schedule.segments" :key="segment.id">
                   <div class="constructor-gantt__segment">
-                    <div class="constructor-gantt__row constructor-gantt__row--header">
+                    <div class="constructor-gantt__row constructor-gantt__row--header neo-data-table__grid-row">
                       <button
                         v-if="segment.expandable"
                         type="button"
@@ -264,7 +264,7 @@ function periodLineStyle(period: GanttSegment['period']) {
                       <div
                         v-for="(phase, phaseIndex) in segment.phases"
                         :key="`${segment.id}-phase-${phaseIndex}`"
-                        class="constructor-gantt__row"
+                        class="constructor-gantt__row neo-data-table__grid-row"
                       >
                         <div
                           class="constructor-gantt__label"
@@ -303,7 +303,7 @@ function periodLineStyle(period: GanttSegment['period']) {
                           :key="child.id"
                           class="constructor-gantt__child"
                         >
-                          <div class="constructor-gantt__row constructor-gantt__row--header">
+                          <div class="constructor-gantt__row constructor-gantt__row--header neo-data-table__grid-row">
                             <button
                               v-if="child.expandable"
                               type="button"
@@ -357,7 +357,7 @@ function periodLineStyle(period: GanttSegment['period']) {
                             <div
                               v-for="(phase, phaseIndex) in child.phases"
                               :key="`${child.id}-phase-${phaseIndex}`"
-                              class="constructor-gantt__row"
+                              class="constructor-gantt__row neo-data-table__grid-row"
                             >
                               <div
                                 class="constructor-gantt__label"
@@ -478,6 +478,10 @@ function periodLineStyle(period: GanttSegment['period']) {
   gap: var(--gantt-column-gap);
   align-items: center;
   min-height: 32px;
+}
+
+.constructor-gantt__row.neo-data-table__grid-row {
+  border-radius: var(--radius-sm);
 }
 
 .constructor-gantt__head-row {

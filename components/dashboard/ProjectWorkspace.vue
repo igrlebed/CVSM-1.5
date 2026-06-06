@@ -242,7 +242,7 @@ const emptyHint = computed(() => {
   padding: var(--gap-page);
   background: var(--background-primary);
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .project-workspace__nav {
