@@ -330,12 +330,15 @@ const emptyHint = computed(() => {
 .project-workspace__body--table {
   align-items: stretch;
   justify-content: flex-start;
+  min-width: 0;
+  overflow: hidden;
   text-align: left;
 }
 
 .project-workspace__ranking,
 .project-workspace__constructor {
   flex: 1 1 0;
+  min-width: 0;
   min-height: 0;
   overflow: hidden;
 }

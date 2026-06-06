@@ -321,6 +321,9 @@
   width: var(--scroll-thumb-width);
   max-width: var(--scroll-thumb-width);
   min-width: var(--scroll-thumb-width);
+  height: var(--scroll-thumb-width);
+  max-height: var(--scroll-thumb-width);
+  min-height: var(--scroll-thumb-width);
 }
 
 .neo-scroll::-webkit-scrollbar-track,

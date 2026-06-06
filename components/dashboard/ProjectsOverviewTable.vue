@@ -224,6 +224,7 @@ const { metricColWidth, projectColWidths, tableStyle, layoutStyle } =
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
+  min-width: 0;
   min-height: 0;
   width: 100%;
   overflow: hidden;
@@ -233,16 +234,23 @@ const { metricColWidth, projectColWidths, tableStyle, layoutStyle } =
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  min-width: 0;
   min-height: 0;
   overflow-x: auto;
   overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .projects-overview__layout {
   display: flex;
-  flex: 1 1 0;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: stretch;
+  flex-shrink: 0;
+  align-self: flex-start;
   min-height: 0;
   min-width: 100%;
   overflow: hidden;
@@ -283,8 +291,9 @@ const { metricColWidth, projectColWidths, tableStyle, layoutStyle } =
   flex: 1 1 0;
   width: 100%;
   min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
 }
 
 .projects-overview__table {

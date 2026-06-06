@@ -44,6 +44,7 @@ function toggleTableExpanded() {
   flex: 1 1 0;
   flex-direction: column;
   gap: var(--gap-section);
+  min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
@@ -53,6 +54,7 @@ function toggleTableExpanded() {
   flex: 1 1 0;
   align-items: stretch;
   gap: var(--gap-workspace);
+  min-width: 0;
   min-height: 0;
   overflow: hidden;
   transition: gap 320ms cubic-bezier(0.4, 0, 0.2, 1);
