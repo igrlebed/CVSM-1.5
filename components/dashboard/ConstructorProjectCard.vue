@@ -74,6 +74,7 @@ function toggle(event: MouseEvent) {
   padding: var(--gap-md) var(--gap-xl);
   margin: 0;
   border-radius: var(--radius-3xl);
+  overflow: hidden;
   cursor: pointer;
   text-align: left;
   font: inherit;
@@ -81,12 +82,19 @@ function toggle(event: MouseEvent) {
   background: transparent;
   isolation: isolate;
   appearance: none;
+  outline: none;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
 .constructor-project-card:not(.constructor-project-card--readonly) {
   border: var(--border-width) solid var(--border-stroke);
-  box-shadow: none;
-  outline: none;
+  box-shadow: var(--shadow-outer);
+}
+
+.constructor-project-card.neo-interactive:active:not(:disabled) {
+  transform: none;
 }
 
 .constructor-project-card--readonly {
@@ -104,24 +112,22 @@ function toggle(event: MouseEvent) {
 
 .constructor-project-card--selected:not(.constructor-project-card--readonly) {
   border-color: var(--border-active);
-}
-
-.constructor-project-card--selected .constructor-project-card__bg,
-.constructor-project-card--readonly .constructor-project-card__bg {
-  background: var(--background-primary);
-}
-
-.constructor-project-card.neo-interactive:hover:not(:disabled):not(.constructor-project-card--readonly),
-.constructor-project-card.neo-interactive:active:not(:disabled):not(.constructor-project-card--readonly) {
-  border-color: var(--border-hover);
   box-shadow: none;
+}
+
+.constructor-project-card--selected .constructor-project-card__inset {
+  box-shadow: var(--shadow-select-pressed);
+}
+
+.constructor-project-card.neo-interactive:hover:not(:disabled):not(.constructor-project-card--readonly):not(.constructor-project-card--selected),
+.constructor-project-card.neo-interactive:active:not(:disabled):not(.constructor-project-card--readonly):not(.constructor-project-card--selected) {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-outer-hover);
   transform: none;
-  outline: none;
 }
 
 .constructor-project-card.neo-interactive:focus:not(:disabled):not(.constructor-project-card--readonly),
 .constructor-project-card.neo-interactive:focus-visible:not(:disabled):not(.constructor-project-card--readonly) {
-  outline: none;
   border-color: var(--border-hover);
 }
 
@@ -131,31 +137,18 @@ function toggle(event: MouseEvent) {
 .constructor-project-card--selected.neo-interactive:focus-visible:not(:disabled) {
   border-color: var(--border-active);
   box-shadow: none;
-  outline: none;
 }
 
-.constructor-project-card.neo-interactive:hover:not(:disabled):not(.constructor-project-card--selected)
-  .constructor-project-card__bg,
-.constructor-project-card.neo-interactive:active:not(:disabled):not(.constructor-project-card--selected)
-  .constructor-project-card__bg {
-  background: var(--island-inner);
-}
-
-.constructor-project-card--selected.neo-interactive:hover:not(:disabled) .constructor-project-card__bg,
-.constructor-project-card--selected.neo-interactive:active:not(:disabled) .constructor-project-card__bg {
-  background: var(--background-primary);
-}
-
-.constructor-project-card.neo-interactive:hover:not(:disabled) .constructor-project-card__inset,
-.constructor-project-card.neo-interactive:active:not(:disabled) .constructor-project-card__inset {
-  box-shadow: none;
+.constructor-project-card--selected.neo-interactive:hover:not(:disabled) .constructor-project-card__inset,
+.constructor-project-card--selected.neo-interactive:active:not(:disabled) .constructor-project-card__inset {
+  box-shadow: var(--shadow-select-pressed);
 }
 
 .constructor-project-card__bg {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: var(--island-external);
+  background: var(--select-pill-surface);
   border-radius: inherit;
   pointer-events: none;
   transition: background-color var(--transition-fast);
@@ -167,6 +160,7 @@ function toggle(event: MouseEvent) {
   z-index: 0;
   border-radius: inherit;
   pointer-events: none;
+  transition: box-shadow var(--transition-fast);
 }
 
 .constructor-project-card__check {
